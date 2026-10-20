@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הסתברות כללית - שיעור 1</title>
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --panel-q-bg: #fff8f0;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --panel-q-bg: #2d241e;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 0.5rem 1rem 1.5rem 1rem;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 260px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercise {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-solution {
+            background-color: var(--success-color);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercise {
+            background-color: var(--panel-q-bg);
+            border-color: var(--warning-color);
+        }
+
+        .solution-box {
+            display: none;
+            background-color: var(--sol-bg);
+            border: 1px solid var(--success-color);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .panel.open, .solution-box.open {
+            display: block;
+        }
+
+        .exercise-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .prob-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .prob-table th, .prob-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+        }
+
+        .prob-table th {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>הסתברות כללית - הרצאה ותרגול</h1>
+        <h2>שיעור 1: מרחב מדגם, מאורעות, פעולות וקומבינטוריקה</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-1">1. מושגים בסיסיים בתורת ההסתברות</a></li>
+                <li><a href="#subtopic-2">2. מרחב מדגם ומאורעות (דוגמת הטלת קובייה)</a></li>
+                <li><a href="#subtopic-3">3. פעולות על מאורעות</a></li>
+                <li><a href="#subtopic-4">4. חוקים ומאורעות מיוחדים</a></li>
+                <li><a href="#subtopic-5">5. טבלת הסתברויות ותרגילי חישוב משולבים</a></li>
+                <li><a href="#subtopic-6">6. חישוב הסתברות במרחב מדגם סימטרי</a></li>
+                <li><a href="#subtopic-7">7. נוסחאות קומבינטוריות ותרגילים מתקדמים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. מושגים בסיסיים בתורת ההסתברות</h2>
+                    <span class="objective-tag">יעד: הגדרת מרחב מדגם ומאורעות</span>
+                </div>
+                <div class="theory-section">
+                    <p>תורת ההסתברות היא מודל מתמטי לטיפול בבעיות של אי ודאות. מטרתנו היא לייחס לכל מאורע לא ודאי את ההסתברות שבה הוא יכול להתרחש.</p>
+                    <ul>
+                        <li><strong>ניסוי מקרי (אקראי):</strong> ניסוי בעל מספר תוצאות אפשריות שאינו ידוע מראש (למשל: הטלת קובייה).</li>
+                        <li><strong>מרחב מדגם (\(\Omega\)):</strong> אוסף כל התוצאות האפשריות של הניסוי המקרי.</li>
+                        <li><strong>מאורע (\(A, B, C...\)):</strong> תת-קבוצה של מרחב המדגם (חלק מהתוצאות האפשריות).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. מרחב מדגם ומאורעות (הטלת קובייה)</h2>
+                    <span class="objective-tag">יעד: הדגמת מרחב מדגם, מאורע ודאי ומאורע ריק</span>
+                </div>
+                <div class="theory-section">
+                    <p>נבחן את ניסוי הטלת הקובייה לפיה מוגדרים המושגים הבאים באופן מעשי:</p>
+                    <ul>
+                        <li><strong>מרחב המדגם:</strong> \(\Omega = \{1, 2, 3, 4, 5, 6\}\)</li>
+                        <li><strong>מאורע \(A\) ("כל התוצאות הזוגיות"):</strong> \(A = \{2, 4, 6\}\)</li>
+                        <li><strong>מאורע \(B\) ("כל התוצאות האי זוגיות"):</strong> \(B = \{1, 3, 5\}\)</li>
+                        <li><strong>מאורע \(D\) (מאורע ודאי):</strong> \(D = \Omega = \{1, 2, 3, 4, 5, 6\}\)</li>
+                        <li><strong>מאורע \(E\) (מאורע ריק):</strong> \(E = \emptyset\), כלומר מאורע שלעולם אינו יכול להתרחש.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. פעולות על מאורעות</h2>
+                    <span class="objective-tag">יעד: איחוד, חיתוך, משלים והפרש מאורעות</span>
+                </div>
+                <div class="theory-section">
+                    <p>בהינתן מרחב מדגם \(\Omega\) ומאורעות \(A\) ו-\(B\):</p>
+                    <ul>
+                        <li><strong>איחוד (\(A \cup B\)):</strong> מתרחש כאשר לפחות אחד מהמאורעות (\(A\) או \(B\)) מתרחש.</li>
+                        <li><strong>חיתוך (\(A \cap B\)):</strong> מתרחש כאשר גם \(A\) וגם \(B\) מתרחשים בו-זמנית.</li>
+                        <li><strong>מאורע משלים (\(\bar{A}\)):</strong> מתרחש כאשר המאורע \(A\) <em>אינו</em> מתרחש.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3')">הצג דוגמה</button>
+                </div>
+                <div id="ex3" class="panel panel-example">
+                    <h4>דוגמה מקורית:</h4>
+                    <p>עבור \(A = \{1, 2, 3\}\) ו-\(B = \{2, 4, 6\}\), איחוד הקבוצות נותן את כל האיברים המשותפים והייחודיים: \(\{1, 2, 3, 4, 6\}\).</p>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. חוקים ומאורעות מיוחדים</h2>
+                    <span class="objective-tag">יעד: חוקי דה-מורגן ותכונות קבוצתיות</span>
+                </div>
+                <div class="theory-section">
+                    <p>תכונות מרכזיות של פעולות קבוצתיות והסתברותיות:</p>
+                    <ul>
+                        <li><strong>חוקי דה-מורגן:</strong> \(\overline{A \cup B} = \bar{A} \cap \bar{B}\) (המשלים של האיחוד שווה לחיתוך המשלימים).</li>
+                        <li><strong>הפרש ומשלים:</strong> \(A \setminus B = A \cap \bar{B}\) (ההפרש בין \(A\) ל-\(B\) הוא החלק ב-\(A\) שאינו שייך ל-\(B\)).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4')">הצג דוגמה</button>
+                </div>
+                <div id="ex4" class="panel panel-example">
+                    <h4>דוגמה מקורית:</h4>
+                    <p>הדגמת חוקי דה-מורגן על מאורעות משלימים במרחב מדגם סופי.</p>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. טבלת הסתברויות ותרגילי חישוב משולבים</h2>
+                    <span class="objective-tag">יעד: ניתוח הסתברויות באמצעות טבלת חיתוכים ומשלימים</span>
+                </div>
+                <div class="theory-section">
+                    <p>טבלת הסתברויות המרכזת את כל חיתוכי המאורעות והשוליות שלהם:</p>
+                    <table class="prob-table">
+                        <tr>
+                            <th></th>
+                            <th>\(B\)</th>
+                            <th>\(\bar{B}\)</th>
+                            <th>סך הכל</th>
+                        </tr>
+                        <tr>
+                            <th>\(A\)</th>
+                            <td>0.1</td>
+                            <td>0.2</td>
+                            <td>0.3</td>
+                        </tr>
+                        <tr>
+                            <th>\(\bar{A}\)</th>
+                            <td>0.5</td>
+                            <td>0.2</td>
+                            <td>0.7</td>
+                        </tr>
+                        <tr>
+                            <th>סך הכל</th>
+                            <td>0.6</td>
+                            <td>0.4</td>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5')">הצג דוגמה</button>
+                    <button class="btn btn-exercise" onclick="togglePanel('q5')">הצג תרגילים</button>
+                </div>
+                <div id="ex5" class="panel panel-example">
+                    <h4>דוגמה מקורית:</h4>
+                    <p>חישוב הסתברות מותנית מתוך שילוב נתוני הטבלה והכללים הקבוצתיים.</p>
+                </div>
+                <div id="q5" class="panel panel-exercise">
+                    <h3 style="margin-bottom: 15px;">תרגילי חישוב מתוך הטבלה</h3>
+                    <div class="exercise-item">
+                        <p><strong>1. חשב את \(P(\bar{A})\) ואת \(P(\bar{B})\)</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol5_1')">הצג פתרון</button>
+                        <div id="sol5_1" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>\(P(\bar{A}) = 0.7,\quad P(\bar{B}) = 0.4\)</p>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <p><strong>2. חיתוכים שונים: \(P(A \cap B), P(\bar{A} \cap B), P(A \cap \bar{B}), P(\bar{A} \cap \bar{B})\)</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol5_2')">הצג פתרון</button>
+                        <div id="sol5_2" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>\(P(A \cap B) = 0.2,\ P(\bar{A} \cap B) = 0.5,\ P(A \cap \bar{B}) = 0.2,\ P(\bar{A} \cap \bar{B}) = 0.1\)</p>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <p><strong>3. איחודים שונים: \(P(A \cup B)\) וכו'</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol5_3')">הצג פתרון</button>
+                        <div id="sol5_3" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>לפי נוסחת האיחוד: \(P(A \cup B) = P(A) + P(B) - P(A \cap B) = 0.3 + 0.6 - 0.1 = 0.8\)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="subtopic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. חישוב הסתברות במרחב מדגם סימטרי</h2>
+                    <span class="objective-tag">יעד: נוסחת ההסתברות הקומבינטורית ודוגמאות חישוב</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>הגדרה של מרחב הסתברות סימטרי:</strong></p>
+                    <p>מרחב מדגם סימטרי שבו לכל תוצאה יש סיכוי שווה להתרחש מאפשר לחשב את ההסתברות של מאורע \(A\) לפי היחס בין מספר תוצאות המאורע למספר תוצאות מרחב המדגם:</p>
+                    <p style="text-align: center; margin: 15px 0;">\(P(A) = \frac{|A|}{|\Omega|}\)</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex6')">הצג דוגמה</button>
+                    <button class="btn btn-exercise" onclick="togglePanel('q6')">הצג תרגילים</button>
+                </div>
+                <div id="ex6" class="panel panel-example">
+                    <h4>דוגמה מקורית להמחשה:</h4>
+                    <p>בחירת קלף אקראי מחפיסה מלאה וחישוב ההסתברות לקבלת מספר ראשוני.</p>
+                </div>
+                <div id="q6" class="panel panel-exercise">
+                    <h3 style="margin-bottom: 15px;">תרגיל מרכזי: בחירת מספר מ-1 עד 100</h3>
+                    <p style="margin-bottom: 10px;">ניסוי: בוחרים מספר אחד באופן אקראי מקבוצת המספרים מ-1 עד 100. מצא את ההסתברות של המאורעות הבאים:</p>
+                    
+                    <div class="exercise-item">
+                        <p><strong>א. נבחר מספר זוגי</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol6a')">הצג פתרון</button>
+                        <div id="sol6a" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>\(|\Omega| = 100,\ |A| = 50 \implies P(A) = \frac{50}{100} = 0.5\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ב. נבחר מספר אי-זוגי</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol6b')">הצג פתרון</button>
+                        <div id="sol6b" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>\(|B| = 50 \implies P(B) = \frac{50}{100} = 0.5\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ג. נבחר מספר שמתחלק ב-5 ללא שארית</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol6c')">הצג פתרון</button>
+                        <div id="sol6c" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>\(|C| = 20 \implies P(C) = \frac{20}{100} = 0.2\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ד. נבחר מספר גדול מ-23</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol6d')">הצג פתרון</button>
+                        <div id="sol6d" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>המספרים מ-24 עד 100: \(|D| = 100 - 23 = 77 \implies P(D) = \frac{77}{100} = 0.77\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ה. נבחר מספר בין 12 לבין 59 (כולל קצוות 12 ו-59)</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol6e')">הצג פתרון</button>
+                        <div id="sol6e" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>מספר האיברים בקבוצה הוא \((59 - 12 + 1) = 48\), ולכן: \(P(E) = \frac{48}{100} = 0.48\)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="subtopic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. נוסחאות קומבינטוריות ותרגילים מתקדמים</h2>
+                    <span class="objective-tag">יעד: תמורות, סידורי ספרים ומרחבי ספירה</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>תמורות (Permutations):</strong></p>
+                    <p>מספר התמורות (הסידורים האפשריים) של \(n\) איברים שונים בשורה הוא \(n!\) (עצרת).</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex7')">הצג דוגמה</button>
+                    <button class="btn btn-exercise" onclick="togglePanel('q7')">הצג תרגילים</button>
+                </div>
+                <div id="ex7" class="panel panel-example">
+                    <h4>דוגמה מקורית להמחשה:</h4>
+                    <p>סידור 5 אנשים בשורה לפי נוסחת העצרת: \(5! = 120\).</p>
+                </div>
+                <div id="q7" class="panel panel-exercise">
+                    <h3 style="margin-bottom: 15px;">תרגיל מרכזי (ספרים במדף)</h3>
+                    <p style="margin-bottom: 10px;">מסדרים במדף 6 ספרים שונים במתמטיקה (\(n_1=6\)), 4 ספרים שונים בסטטיסטיקה (\(n_2=4\)) ו-5 ספרים שונים בכלכלה (\(n_3=5\)).</p>
+                    
+                    <div class="exercise-item">
+                        <p><strong>א. מהו מספר הסידורים האפשרי במדף?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7a')">הצג פתרון</button>
+                        <div id="sol7a" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>סך כל הספרים הוא \(6+4+5 = 15\), ולכן מרחב המדגם הוא \(|\Omega| = 15!\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ב. מה ההסתברות שכל הספרים במתמטיקה יהיו צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7b')">הצג פתרון</button>
+                        <div id="sol7b" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>מתייחסים לספרי המתמטיקה כאל "גוש" אחד. ישנם \(11\) גושים בסך הכל (10 האחרים + גוש המתמטיקה), ולכן הסידור הפנימי של גוש המתמטיקה הוא \(6!\) והסידור של הגושים הוא \(11!\). ההסתברות היא: \(P(A) = \frac{6! \cdot 11!}{15!} \approx 0.02\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ג. מה ההסתברות שכל הספרים בסטטיסטיקה יהיו צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7c')">הצג פתרון</button>
+                        <div id="sol7c" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>בדומה לסעיף הקודם, יוצרים גוש לסטטיסטיקה: \(P(B) = \frac{4! \cdot 12!}{15!} \approx 0.00879\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ד. מה ההסתברות שכל הספרים בכלכלה יהיו צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7d')">הצג פתרון</button>
+                        <div id="sol7d" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>יוצרים גוש לכלכלה: \(P(C) = \frac{5! \cdot 11!}{15!} \approx 0.00366\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ה. מה ההסתברות שכל הספרים בכלכלה יהיו צמודים זה לזה וגם כל הספרים במתמטיקה יהיו צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7e')">הצג פתרון</button>
+                        <div id="sol7e" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>מתייחסים לשתי הקבוצות כאל שני גושים נפרדים (בנוסף ל-4 ספרי הסטטיסטיקה הנותרים, סך הכל \(1 + 1 + 4 = 6\) גושים): \(P(D) = \frac{5! \cdot 6! \cdot 6!}{15!} \approx 0.000047\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ו. מה ההסתברות שכל הספרים בכלכלה יהיו צמודים זה לזה וגם כל הספרים בסטטיסטיקה יהיו צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7f')">הצג פתרון</button>
+                        <div id="sol7f" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>שני גושים (כלכלה וסטטיסטיקה) יחד עם 6 ספרי המתמטיקה (סך הכל \(2 + 6 = 8\) גושים): \(P(E) = \frac{5! \cdot 4! \cdot 8!}{15!} \approx 0.000088\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ז. מה ההסתברות שכל הספרים במתמטיקה צמודים זה לזה וגם כל הספרים בסטטיסטיקה צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7g')">הצג פתרון</button>
+                        <div id="sol7g" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>שני גושים (מתמטיקה וסטטיסטיקה) יחד עם 5 ספרי הכלכלה (סך הכל \(2 + 5 = 7\) גושים): \(P(F) = \frac{6! \cdot 4! \cdot 7!}{15!} \approx 0.000066\)</p>
+                        </div>
+                    </div>
+
+                    <div class="exercise-item">
+                        <p><strong>ח. מה ההסתברות שכל הספרים באותו מקצוע צמודים זה לזה?</strong></p>
+                        <button class="btn btn-solution" onclick="toggleSolution('sol7h')">הצג פתרון</button>
+                        <div id="sol7h" class="solution-box">
+                            <strong>פתרון:</strong>
+                            <p>שלושה גושים נפרדים (מתמטיקה, סטטיסטיקה וכלכלה) שביניהם יש \(3!\) אפשרויות סידור פנימיות בין הגושים עצמם: \(P(G) = \frac{6! \cdot 4! \cdot 5! \cdot 3!}{15!} \approx 0.0000095\)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        if (localStorage.getItem('theme_mode') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+
+        function toggleSolution(solId) {
+            const sol = document.getElementById(solId);
+            sol.classList.toggle('open');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                document.body.classList.toggle('dark-mode', event.data.isDark);
+            }
+        });
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+    </script>
+</body>
+</html>
