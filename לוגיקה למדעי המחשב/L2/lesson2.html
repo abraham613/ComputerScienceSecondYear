@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוגיקה למדעי המחשב - סיכום הרצאה: אינדוקציה מבנית ושפת הפסוקים</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .highlight-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-right: 3px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>לוגיקה למדעי המחשב - הרצאה</h1>
+        <h2>סיכום שלב אחר שלב: אינדוקציה מבנית, שפת הפסוקים ותכונותיהם</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-1">1. אינדוקציה מבנית: מבוא והשוואה</a></li>
+                <li><a href="#subtopic-2">2. טענת שוויון הסוגריים בפסוקים</a></li>
+                <li><a href="#subtopic-3">3. רישא ורישא ממש של מחרוזת</a></li>
+                <li><a href="#subtopic-4">4. טענה: רישא ממש של פסוק אינה פסוק</a></li>
+                <li><a href="#subtopic-5">5. טענה: מספר אטומים לעומת קשרים בינאריים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. אינדוקציה מבנית (Structural Induction) - מבוא</h2>
+                    <span class="objective-tag">מבוא ועקרונות</span>
+                </div>
+                <div class="theory-section">
+                    <p>אינדוקציה מבנית משמשת להוכחת טענות על כל איברי מבנה רקורסיבי (כמו שפות פורמליות ועצי בנייה של פסוקים).</p>
+                    <ul>
+                        <li><strong>יתרון מרכזי:</strong> מאפשרת להוכיח טענות גורפות על <em>כל</em> הפסוקים האפשריים בשפה באמצעות אינדוקציה על מבנה ההרכבה שלהם.</li>
+                        <li><strong>הבדל מאינדוקציה רגילה:</strong> אינדוקציה מתמטית רגילה מוגבלת למספרים טבעיים בלבד (<span dir="ltr">n</span> ו-<span dir="ltr">n + 1</span>), בעוד אינדוקציה מבנית מתאימה למבנים רקורסיביים ועצי תחביר.</li>
+                        <li><strong>הערה:</strong> בהוכחות על שפת הפסוקים, יש להיצמד לקבוצת הבסיס <span dir="ltr">B</span> ולקבוצת האופרטורים <span dir="ltr">K</span> המוגדרות, אך ניתן להשתמש בכתיב מקוצר ("כתיב חסר").</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. טענת שוויון הסוגריים בפסוק תקין</h2>
+                    <span class="objective-tag">טענה והוכחה</span>
+                </div>
+                <div class="theory-section">
+                    <p>הוכחנו שכל פסוק תקין בשפה מקיים תכונה בסיסית מבנית:</p>
+                    <div class="highlight-box">
+                        <strong>טענה:</strong> בכל פסוק תקין <span dir="ltr">&alpha;</span>, כמות הסוגריים הימניים שווה בדיוק לכמות הסוגריים השמאליים (<span dir="ltr">#(R)(&alpha;) = #(L)(&alpha;)</span>).
+                    </div>
+                    <ul>
+                        <li><strong>בסיס האינדוקציה:</strong> בפסוק אטומי <span dir="ltr">&alpha; = p</span> אין כלל סוגריים, ולכן <span dir="ltr">0 = 0</span>.</li>
+                        <li><strong>צעד האינדוקציה:</strong> הוכח עבור אופרטור אונארי (<span dir="ltr">&not;&alpha;</span>) ועבור קשר בינארי (<span dir="ltr">&alpha; &bull; &beta;</span>), תוך שימוש בהנחת האינדוקציה והוספת סוגריים שמאליים וימניים באופן שווה.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. הגדרת "רישא" ו-"רישא ממש"</h2>
+                    <span class="objective-tag">הגדרות בסיס</span>
+                </div>
+                <div class="theory-section">
+                    <ul>
+                        <li><strong>רישא (Prefix):</strong> רצף תווים שמתחיל בדיוק מתחילת המחרוזת המקורית ונמשך עד נקודה כלשהי בתוכה.</li>
+                        <li><strong>רישא ממש (Proper Prefix):</strong> רישא ששווה באורכה לקחת חלק מהמחרוזת אך קטנה מאורך המחרוזת המקורית (כולל המחרוזת הריקה <span dir="ltr">&epsilon;</span>).</li>
+                        <li><strong>דוגמה:</strong> למחרוזת <span dir="ltr">efgab</span> יש 5 רישות ממש: המחרוזת הריקה <span dir="ltr">&epsilon;</span>,‏ <span dir="ltr">e</span>,‏ <span dir="ltr">ef</span>,‏ <span dir="ltr">efg</span>, וְ-<span dir="ltr">efga</span>.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3')">הצג דוגמה על מחרוזת ריקה</button>
+                </div>
+                <div id="ex3" class="panel panel-example">
+                    <h4>מהי מחרוזת ריקה (<span dir="ltr">&epsilon;</span>)?</h4>
+                    <p>מחרוזת ריקה היא מחרוזת באורך 0 שאינה מכילה תווים. בהקשר של פסוקים, הרישא הממש היחידה של פסוק אטומי היא המחרוזת הריקה, והיא עצמה אינה פסוק תקין.</p>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. טענה: רישא ממש של פסוק אינה פסוק</h2>
+                    <span class="objective-tag">תכונות מבניות</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>טענה:</strong> אם ניקח פסוק תקין ונחתוך ממנו רישא ממש (תת-מחרוזת שמתחילה מההתחלה ואינה באורך המלא), המחרוזת המתקבלת <strong>לעולם אינה פסוק</strong>.
+                    </div>
+                    <ul>
+                        <li><strong>סיבה מרכזית:</strong> תמיד יישאר חוסר איזון מבני (למשל מספר סוגריים שמאליים גדול ממספר הימניים: <span dir="ltr">#(L) &gt; #(R)</span>) או שהמחרוזת תיחתך באמצע בלי להיסגר כהלכה.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. טענה: מספר האטומים גדול ב-1 ממספר הקשרים הבינאריים</h2>
+                    <span class="objective-tag">הוכחה באינדוקציה</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>טענה:</strong> בכל פסוק <span dir="ltr">&alpha;</span>, מספר הפסוקים האטומים (המשתנים כמו <span dir="ltr">p, q</span>) גדול בדיוק ב-1 ממספר הקשרים הבינאריים (<span dir="ltr">#(A)(&alpha;) = #(B)(&alpha;) + 1</span>).
+                    </div>
+                    <ul>
+                        <li><strong>בסיס האינדוקציה:</strong> בפסוק אטומי יחיד <span dir="ltr">p</span> יש אטום 1 ו-0 קשרים בינאריים (<span dir="ltr">1 = 0 + 1</span>).</li>
+                        <li><strong>צעד האינדוקציה:</strong>
+                            <ul>
+                                <li>קשר אונארי (<span dir="ltr">&not;&alpha;</span>): אינו מוסיף אטומים ואינו מוסיף קשרים בינאריים, ולכן ההפרש נשמר.</li>
+                                <li>קשר בינארי (<span dir="ltr">&alpha; &bull; &beta;</span>): מחבר שני תתי-פסוקים, מוסיף אטומים מצרפיים ומעלה את מספר הקשרים הבינאריים בדיוק ב-1, כך שהשוויון נשמר תמיד.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

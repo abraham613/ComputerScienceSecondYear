@@ -193,8 +193,8 @@
     </main>
 
     <script>
-        const availableLessons = [1];
-        const TOTAL_LESSONS = 1;
+        const availableLessons = [1,2];
+        const TOTAL_LESSONS = 2;
 
         const lessonsSidebar = document.getElementById('lessons-sidebar');
         const mainView = document.getElementById('main-view');
@@ -225,7 +225,8 @@
             lessonsSidebar.classList.add('hidden');
 
             if (availableLessons.includes(lessonNum)) {
-                const filePath = lessonNum === 1 ? 'L1/lesson1.html' : `lesson${lessonNum}.html`;
+                const filePath = `L${lessonNum}/lesson${lessonNum}.html`;
+
                 
                 // הוספת כפתור חזרה לרשימת השיעורים מעל ה-iframe
                 mainView.innerHTML = `
