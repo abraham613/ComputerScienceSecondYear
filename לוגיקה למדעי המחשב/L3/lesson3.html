@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוגיקה למדעי המחשב - שיעור: קריאות יחידה וגרירה לוגית</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercises {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercises {
+            background-color: rgba(142, 68, 173, 0.08);
+            border-color: #8e44ad;
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .highlight-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-right: 3px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .sub-question-card {
+            background-color: var(--item-bg);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid #8e44ad;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sub-question-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 10px 0;
+            font-size: 1.05rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        .step-explanation {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>לוגיקה למדעי המחשב - הרצאה</h1>
+        <h2>סיכום מקיף ומפורט: קריאות יחידה (3 ההוכחות המלאות), פונקציית האמת המורחבת וגרירה לוגית</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. הגדרת קריאות יחידה</a></li>
+                <li><a href="#topic-2">2. דוגמה נגדית ומשפט קריאות היחידה</a></li>
+                <li><a href="#topic-3">3. 3 הוכחות היחידות מהמחברת (שלב אחר שלב)</a></li>
+                <li><a href="#topic-4">4. פונקציית האמת המורחבת (V̄)</a></li>
+                <li><a href="#topic-5">5. הגדרת גרירה לוגית (U ⊨ α)</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. הגדרת קריאות יחידה (Unique Readability)</h2>
+                    <span class="objective-tag">הגדרת יסוד</span>
+                </div>
+                <div class="theory-section">
+                    <p>בשפות פורמליות ולוגיות, אנו דורשים שלכל פסוק מורכב יהיה פירוש ויזואלי ותחבירי <strong>יחיד וחד-משמעי</strong>.</p>
+                    <div class="highlight-box">
+                        <strong>הגדרה:</strong> נתון מבנה אינדוקטיבי <span dir="ltr">C(B, K)</span> כאשר <span dir="ltr">B</span> קבוצת הבסיס ו-<span dir="ltr">K</span> קבוצת האופרטורים. נאמר ש-<span dir="ltr">C</span> בעל קריאות יחידה אם לכל <span dir="ltr">X &isin; C</span> מתקיים בדיוק אחד מהתנאים הבאים:
+                    </div>
+                    <ul>
+                        <li><strong>תנאי 1 (אטומי):</strong> <span dir="ltr">X &isin; B</span> (אינו נוצר ע"י אופרטורים, אלא איבר בסיסי בלבד).</li>
+                        <li><strong>תנאי 2 (מורכב):</strong> קיימים אברים יחידים <span dir="ltr">a<sub>1</sub>, a<sub>2</sub>, ..., a<sub>n</sub> &isin; C</span> ואופרטור יחיד <span dir="ltr">f &isin; K</span> כך ש-<span dir="ltr">X = f(a<sub>1</sub>, a<sub>2</sub>, ..., a<sub>n</sub>)</span>.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג הסבר על חשיבות היחידות</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>למה זה חשוב?</h4>
+                    <p>ללא קריאות יחידה, אותה מחרוזת תווים תוכל להתפרש ככמה עצי גזירה שונים, דבר שיגרום לסתירות בקביעת ערך האמת של הפסוק. אנו נדרשים להוכיח שכל פסוק מקבל ייצוג יחיד במבנה העץ שלו.</p>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. דוגמה למבנה ללא קריאות יחידה ומשפט הפסוקים</h2>
+                    <span class="objective-tag">דוגמה נגדית ומשפט</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>דוגמה נגדית:</strong> יהי <span dir="ltr">B = {0}</span> ו-<span dir="ltr">K = {f(x)=x+1, g(x)=x-2}</span>.</p>
+                    <p>ניתן להגיע למספר <span dir="ltr">1 &isin; C</span> בשתי דרכים שונות לגמרי:</p>
+                    <div class="math-block">
+                        1) f(0) = 0 + 1 = 1
+                        <br>
+                        2) f(f(f(g(0)))) = 0 - 2 + 1 + 1 + 1 = 1
+                    </div>
+                    <p>מכיוון שהדרך אינה יחידה, המבנה אינו בעל קריאות יחידה.</p>
+
+                    <div class="highlight-box">
+                        <strong>משפט קריאות היחידה של קבוצת הפסוקים בכתיב מלא:</strong> לכל פסוק <span dir="ltr">&alpha;</span> מתקיים בדיוק אחד מהתנאים הבאים (זרות מוחלטת ויחידות):
+                        <ol style="padding-right: 20px;">
+                            <li><span dir="ltr">&alpha; &isin; B</span> (פסוק אטומי).</li>
+                            <li>קיים <span dir="ltr">&gamma;</span> יחיד כך ש-<span dir="ltr">&alpha; = (&not; &gamma;)</span>.</li>
+                            <li>קיימים <span dir="ltr">&gamma;, &delta;</span> יחידים וקשר בינארי <span dir="ltr">@</span> יחיד כך ש-<span dir="ltr">&alpha; = (&gamma; @ &delta;)</span>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. 3 הוכחות היחידות מהמחברת (שלב אחר שלב)</h2>
+                    <span class="objective-tag">הוכחות מפורטות מהמרצה</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי להוכיח את משפט קריאות היחידה במלואו, המרצה מוכיח 3 מקרים שונים המכסים את כל סוגי ההשוואות בין מבני הפסוקים האפשריים:</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('proof_exercises_container')">הצג את סעיפי ההוכחה המלאים</button>
+                </div>
+
+                <div id="proof_exercises_container" class="panel panel-exercises">
+
+                    <!-- מקרה 1 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">מקרה ①: יחידות הייצוג עבור קשר אונארי (&alpha; = (&not; &gamma;))</div>
+                        <p><strong>הטענה להוכחה:</strong> יהי <span dir="ltr">&alpha; = (&not; &gamma;)</span>. נוכיח שלא ייתכן כי <span dir="ltr">&alpha; = (&not; &phi;)</span> כאשר <span dir="ltr">&gamma; &ne; &phi;</span>.</p>
+                        
+                        <div class="step-explanation">
+                            <p><strong>מהלך ההוכחה מתוך ניתוח עץ התווים במחברת:</strong></p>
+                            <p>נשווה את שני הפירוקים המוצעים למחרוזת <span dir="ltr">&alpha;</span>:</p>
+                            <div class="math-block">
+                                (&not; &phi;) = (&not; &gamma;)
+                            </div>
+                            <p>נפרק את התווים במחרוזת משמאל לימין באמצעות פונקציית מיקום התווים (<code>charAt</code>):</p>
+                            <ul>
+                                <li>התו הראשון משמאל: <span dir="ltr">str.charAt(0) &rArr; '(' = '('</span> (סוגר שמאלי בשני הצדדים).</li>
+                                <li>התו השני: <span dir="ltr">charAt(1) &rArr; '&not;' = '&not;'</span> (סימן השלילה בשני הצדדים).</li>
+                                <li>התו האחרון מימין: <span dir="ltr">charAt(len-1) &rArr; ')' = ')'</span> (סוגר ימני בסוף בשני הצדדים).</li>
+                                <li><strong>המסקנה התחבירית:</strong> התווים שנותרו באמצע חייבים להיות זהים לחלוטין! כלומר <span dir="ltr">&phi; = &gamma;</span>.</li>
+                            </ul>
+                            <p>קיבלנו שכל פירוק נוסף יוביל בהכרח לכך ש-<span dir="ltr">&phi;</span> ו-<span dir="ltr">&gamma;</span> הם בדיוק אותו הפסוק, בסתירה להנחה ש-<span dir="ltr">&gamma; &ne; &phi;</span>. לכן, הייצוג של קשר אונארי הוא <strong>יחיד</strong>!</p>
+                        </div>
+                    </div>
+
+                    <!-- מקרה 2 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">מקרה ②: אי-אפשרות לחפיפה בין קשר אונארי לקשר בינארי</div>
+                        <p><strong>הטענה להוכחה:</strong> יהי <span dir="ltr">&alpha; = (&not; &gamma;)</span>. נוכיח שלא קיימים <span dir="ltr">&phi;, &psi;</span> וקשר בינארי <span dir="ltr">@</span> כך ש-<span dir="ltr">&alpha; = (&phi; @ &psi;)</span>.</p>
+                        
+                        <div class="step-explanation">
+                            <p><strong>מהלך ההוכחה מתוך ניתוח התווים במחברת:</strong></p>
+                            <p>נניח בשלילה כי אותה מחרוזת <span dir="ltr">&alpha;</span> יכולה להיכתב בשתי הצורות:</p>
+                            <div class="math-block">
+                                (&not; &gamma;) = (&phi; @ &psi;)
+                            </div>
+                            <p>נבדוק את התווים בתחילת המחרוזת לפי השוואת אינדקסים (<code>charAt</code>):</p>
+                            <ul>
+                                <li>התו הראשון: <span dir="ltr">charAt(0) &rArr; '(' = '('</span> (תואם בשני הצדדים).</li>
+                                <li>התו השני: באגף שמאל התו השני הוא הסימן <span dir="ltr">'&not;'</span>, ואילו באגף ימין התו השני הוא התו הראשון של הפסוק <span dir="ltr">&phi;</span>, כלומר <span dir="ltr">&phi;.charAt(0)</span>.</li>
+                                <li>בסוגריים מתקבל: <span dir="ltr">&not; = &phi;.charAt(0)</span>.</li>
+                            </ul>
+                            <p><strong>הסתירה:</strong> שום פסוק תקין בכתיב מלא לא יכול להתחיל בסימן שלילה <span dir="ltr">'&not;'</span> ללא סוגריים פותחים לפניו (מכיוון ששלילה תמיד מוקפת בסוגריים כגון <span dir="ltr">(&not; ...)</span>). לכן הפסוק <span dir="ltr">&phi;</span> אינו חוקי, בסתירה לכך ש-<span dir="ltr">&phi;</span> הוא פסוק תקין. לא ייתכן שפסוק בינארי ופסוק אונארי יזדהו!</p>
+                        </div>
+                    </div>
+
+                    <!-- מקרה 3 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">מקרה ③: יחידות הייצוג עבור קשר בינארי (&alpha; = (&gamma; @ &delta;))</div>
+                        <p><strong>הטענה להוכחה:</strong> יהי <span dir="ltr">&alpha; = (&gamma; @ &delta;)</span>. נוכיח שלא ייתכן פירוק שונה <span dir="ltr">&alpha; = (&phi; * &psi;)</span> עבור <span dir="ltr">&phi; &ne; &gamma;</span>, <span dir="ltr">&psi; &ne; &delta;</span>, או <span dir="ltr">* &ne; @</span>.</p>
+                        
+                        <div class="step-explanation">
+                            <p><strong>מהלך ההוכחה מתוך ניתוח עץ הפירוק במחברת:</strong></p>
+                            <p>נשווה את שני הביטויים הבינאריים:</p>
+                            <div class="math-block">
+                                (&phi; * &psi;) = (&gamma; @ &delta;)
+                            </div>
+                            <p>נסיר את הסוגר השמאלי הפותח <span dir="ltr">charAt(0)</span>:</p>
+                            <div class="math-block">
+                                &phi; * &psi;) = &gamma; @ &delta;)
+                            </div>
+                            <p>כעת נבחן את היחס בין המחרוזות <span dir="ltr">&phi;</span> ו-<span dir="ltr">&gamma;</span>:</p>
+                            <ul>
+                                <li>אם <span dir="ltr">&phi; &ne; &gamma;</span>, אזי אחת המחרוזות חייבת להיות <strong>רישא ממש</strong> של השנייה (למשל, <span dir="ltr">&phi; = &gamma;'</span> כאשר <span dir="ltr">&gamma;'</span> היא רישא ממש של <span dir="ltr">&gamma;</span>).</li>
+                                <li><strong>לפי המשפט שהוכחנו בהרצאה:</strong> רישא ממש של פסוק תקין אינה יכולה להיות פסוק תקין בעצמה (חוסר איזון בסוגריים).</li>
+                                <li>לכן, בהכרח מתחייב: <span dir="ltr">&phi; = &gamma;</span>!</li>
+                                <li>מכאן נובע שנשארנו עם: <span dir="ltr">* &psi;) = @ &delta;)</span>.</li>
+                                <li>התו הבא בתור חייב להיות הקשר הבינארי, ולכן: <span dir="ltr">* = @</span>.</li>
+                                <li>מצמצמים את הקשר ונותרים עם: <span dir="ltr">&psi;) = &delta;)</span>.</li>
+                                <li>בסוף המחרוזת <span dir="ltr">charAt(len-1)</span>, מורידים את הסוגר הימני וברור שמתקיים: <span dir="ltr">&psi; = &delta;</span>.</li>
+                            </ul>
+                            <p><strong>מסקנה סופית:</strong> הוכחנו יחידות מלאה לכל 3 המקרים, ולכן לכל פסוק בשפת הפסוקים יש עץ בנייה ופירוק <strong>אחד ויחיד (מ.ש.ל)</strong>!</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. פונקציית האמת המורחבת (V̄)</h2>
+                    <span class="objective-tag">סמנטיקה של פסוקים</span>
+                </div>
+                <div class="theory-section">
+                    <p>פונקציית השמת אמת בסיסית מוגדרת על האטומים: <span dir="ltr">V: P &rarr; {T, F}</span>. הרחבתה לכלל הנוסחאות מסומנת ב-<span dir="ltr">V̄: A &rarr; {T, F}</span>.</p>
+                    <p><strong>כללי החישוב האינדוקטיביים:</strong></p>
+                    <ul>
+                        <li><span dir="ltr">&alpha; &isin; P &rArr; V̄(&alpha;) = V(&alpha;)</span></li>
+                        <li><span dir="ltr">&alpha; = (&gamma; &or; &delta;) &rArr; V̄(&alpha;) = F</span> אם ורק אם <span dir="ltr">V̄(&gamma;) = V̄(&delta;) = F</span></li>
+                        <li><span dir="ltr">&alpha; = (&gamma; &and; &delta;) &rArr; V̄(&alpha;) = T</span> אם ורק אם <span dir="ltr">V̄(&gamma;) = V̄(&delta;) = T</span></li>
+                        <li><span dir="ltr">&alpha; = (&not; &beta;) &rArr; V̄(&alpha;) = T</span> אם ורק אם <span dir="ltr">V̄(&beta;) = F</span></li>
+                        <li><span dir="ltr">&alpha; = (&gamma; &rarr; &delta;) &rArr; V̄(&alpha;) = F</span> אם ורק אם <span dir="ltr">V̄(&gamma;) = T</span> וגם <span dir="ltr">V̄(&delta;) = F</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. הגדרת גרירה לוגית (U ⊨ α)</h2>
+                    <span class="objective-tag">גרירה סמנטית</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>הגדרה:</strong> תהי <span dir="ltr">U</span> קבוצת פסוקים ו-<span dir="ltr">&alpha;</span> פסוק. אומרים ש-<span dir="ltr">U</span> גוררת לוגית את <span dir="ltr">&alpha;</span> (ומסמנים <span dir="ltr">U ⊨ &alpha;</span>) אם לכל השמה <span dir="ltr">V̄</span> המקיימת <span dir="ltr">V̄(U) = T</span> (כלומר מקיימת את כל אברי <span dir="ltr">U</span>), מתקיים בהכרח גם <span dir="ltr">V̄(&alpha;) = T</span>.
+                    </div>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('entailment_exercises')">הצג תרגיל דוגמה בגרירה</button>
+                </div>
+
+                <div id="entailment_exercises" class="panel panel-exercises">
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">תרגיל: האם {p, p &rarr; q} ⊨ q?</div>
+                        <p><strong>פתרון מפורט:</strong> תהי <span dir="ltr">V̄</span> השמה המקיימת את ההנחות. כלומר <span dir="ltr">V̄(p) = T</span> וגם <span dir="ltr">V̄(p &rarr; q) = T</span>. לפי הגדרת הגרירה, כדי ש-<span dir="ltr">p &rarr; q</span> יהיה אמת כאשר <span dir="ltr">p</span> אמת, חובה ש-<span dir="ltr">V̄(q) = T</span>. לכן ההסקה תקפה ומתקיים <span dir="ltr">U ⊨ q</span>.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה בשרשור תמה (מצב לילה/יום) מהחלון הראשי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

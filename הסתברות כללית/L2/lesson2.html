@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הסתברות כללית - שיעור 1: קומבינטוריקה והסתברות מותנית</title>
+    <!-- MathJax לתצוגה מתמטית נקייה ומקצועית כמו במחברת -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercises {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .btn-sol-item {
+            background-color: var(--success-color);
+            color: white;
+            margin-top: 6px;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercises {
+            background-color: rgba(142, 68, 173, 0.08);
+            border-color: #8e44ad;
+        }
+
+        .panel-solution {
+            background-color: var(--sol-bg);
+            border-color: var(--success-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .sub-question-card {
+            background-color: var(--item-bg);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid #8e44ad;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+
+        .sub-question-title {
+            font-weight: 600;
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>הסתברות כללית - הרצאה וסדנה</h1>
+        <h2>סיכום מקיף: קומבינטוריקה, שיטות דגימה, והסתברות מותנית</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. שיטות דגימה ומדגמים</a></li>
+                <li><a href="#topic-2">2. חליפות וצירופים (נוסחאות)</a></li>
+                <li><a href="#topic-3">3. תרגיל מקיף: דגימת כדורים</a></li>
+                <li><a href="#topic-4">4. הגדרת הסתברות מותנית</a></li>
+                <li><a href="#topic-5">5. תרגיל מעשי: טבלת הסתברויות</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. שיטות דגימה ומדגמים מתוך קבוצה נתונה</h2>
+                    <span class="objective-tag">יסודות הספירה</span>
+                </div>
+                <div class="theory-section">
+                    <p>כאשר בוחרים \(k\) איברים מתוך קבוצה בגודל \(n\) איברים, מספר האפשרויות השונות לבחירה תלוי בשיטת הדגימה:</p>
+                    <ul>
+                        <li><strong>א. מדגם סדור עם החזרות:</strong> הסדר שבו נבחרים האיברים חשוב, ומותר לבחור את אותו איבר יותר מפעם אחת.</li>
+                        <li><strong>ב. מדגם סדור ללא החזרות:</strong> הסדר חשוב, אך ברגע שאיבר נבחר הוא לא מוחזר לקבוצה.</li>
+                        <li><strong>ג. מדגם לא סדור וללא החזרות:</strong> הסדר אינו חשוב (בחירת תת-קבוצה), ואין החזרות.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג הסבר מדגם סדור עם החזרות</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>נוסחת מדגם סדור עם החזרות:</h4>
+                    <p>במצב זה יש \(n\) אפשרויות עבור הבחירה הראשונה, \(n\) אפשרויות עבור הבחירה השנייה, וכך הלאה \(k\) פעמים:</p>
+                    <div class="math-block">
+                        \[ n \cdot n \cdot \ldots \cdot n = n^k \]
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. חליפות, צירופים והמקדם הבינומי</h2>
+                    <span class="objective-tag">נוסחאות מפתח</span>
+                </div>
+                <div class="theory-section">
+                    <p>הנוסחאות המרכזיות לחישוב מדגמים ללא החזרה:</p>
+                    <ul>
+                        <li><strong>מספר חליפות (מדגם סדור ללא החזרות):</strong>
+                            <div class="math-block">
+                                \[ P(n, k) = n \cdot (n-1) \cdot (n-2) \cdots (n-k+1) = \frac{n!}{(n-k)!} \]
+                            </div>
+                        </li>
+                        <li><strong>מספר צירופים (מדגם לא סדור וללא החזרות - מקדם בינומי):</strong>
+                            <div class="math-block">
+                                \[ C(n, k) = \binom{n}{k} = \frac{n \cdot (n-1) \cdots (n-k+1)}{k!} = \frac{n!}{k!(n-k)!} \]
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. תרגיל מקיף: דגימת כדורים מקופסה (ללא החזרה)</h2>
+                    <span class="objective-tag">תרגול קומבינטוריקה</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>נתוני הבעיה:</strong> בקופסה נמצאים \(15\) כדורים: \(6\) שחורים, \(4\) לבנים ו-\(5\) כחולים. בוחרים \(3\) כדורים ללא החזרה.</p>
+                    <p>גודל מרחב המדגם:</p>
+                    <div class="math-block">
+                        \[ N = \binom{15}{3} = \frac{15 \cdot 14 \cdot 13}{3 \cdot 2 \cdot 1} = 455 \]
+                    </div>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('balls_exercises_container')">הצג תרגילים וסעיפים</button>
+                </div>
+
+                <!-- מיכל הסעיפים שמוצג רק בלחיצה על כפתור -->
+                <div id="balls_exercises_container" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">סעיפי התרגיל (לחץ על כפתור פתרון תחת כל סעיף):</h3>
+
+                    <!-- סעיף א -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. אין אף כדור שחור</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_a')">הצג פתרון</button>
+                        <div id="ball_a" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{9}{3}}{\binom{15}{3}} = \frac{84}{455} \approx 0.1846 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ב -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. אין אף כדור לבן</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_b')">הצג פתרון</button>
+                        <div id="ball_b" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{11}{3}}{\binom{15}{3}} = \frac{165}{455} \approx 0.3626 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ג -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ג. אין אף כדור כחול</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_c')">הצג פתרון</button>
+                        <div id="ball_c" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{10}{3}}{\binom{15}{3}} = \frac{120}{455} \approx 0.2637 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ד -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ד. יש רק כדורים שחורים</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_d')">הצג פתרון</button>
+                        <div id="ball_d" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{6}{3}}{\binom{15}{3}} = \frac{20}{455} \approx 0.0439 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ה -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ה. יש רק כדורים לבנים</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_e')">הצג פתרון</button>
+                        <div id="ball_e" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{4}{3}}{\binom{15}{3}} = \frac{4}{455} \approx 0.0087 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ו -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ו. יש רק כדורים כחולים</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_f')">הצג פתרון</button>
+                        <div id="ball_f" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{5}{3}}{\binom{15}{3}} = \frac{10}{455} \approx 0.0219 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ז -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ז. יש לפחות כדור שחור אחד</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_g')">הצג פתרון</button>
+                        <div id="ball_g" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ 1 - \frac{84}{455} = \frac{371}{455} \approx 0.8154 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ח -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ח. יש לפחות כדור לבן אחד</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_h')">הצג פתרון</button>
+                        <div id="ball_h" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ 1 - \frac{165}{455} = \frac{290}{455} \approx 0.6374 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ט -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ט. יש לפחות כדור כחול אחד</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_i')">הצג פתרון</button>
+                        <div id="ball_i" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ 1 - \frac{120}{455} = \frac{335}{455} \approx 0.7363 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף י -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">י. יש כדורים מכל צבע</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_j')">הצג פתרון</button>
+                        <div id="ball_j" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{6}{1} \cdot \binom{4}{1} \cdot \binom{5}{1}}{\binom{15}{3}} = \frac{120}{455} \approx 0.2637 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף יא -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">יא. יש שני כדורים שחורים ואחד לבן</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_k')">הצג פתרון</button>
+                        <div id="ball_k" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{6}{2} \cdot \binom{4}{1}}{\binom{15}{3}} = \frac{60}{455} \approx 0.1319 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף יב -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">יב. יש שני כדורים שחורים ואחד כחול</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_l')">הצג פתרון</button>
+                        <div id="ball_l" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{6}{2} \cdot \binom{5}{1}}{\binom{15}{3}} = \frac{75}{455} \approx 0.1648 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף יג -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">יג. יש שני כדורים לבנים ואחד כחול</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('ball_m')">הצג פתרון</button>
+                        <div id="ball_m" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ \frac{\binom{4}{2} \cdot \binom{5}{1}}{\binom{15}{3}} = \frac{30}{455} \approx 0.0659 \]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. הגדרת הסתברות מותנית</h2>
+                    <span class="objective-tag">שיעור 4</span>
+                </div>
+                <div class="theory-section">
+                    <p>הסתברות מותנית מודדת את הסיכוי להתרחשות מאורע \(A\), בהינתן שידוע שמאורע \(B\) כבר התרחש (\(P(B) > 0\)).</p>
+                    <div class="math-block">
+                        \[ P(A \mid B) = \frac{P(A \cap B)}{P(B)} \]
+                    </div>
+                    <p>במרחב מדגם סימטרי:</p>
+                    <div class="math-block">
+                        \[ P(A \mid B) = \frac{|A \cap B|}{|B|} \]
+                    </div>
+                    <p><strong>תכונות מרכזיות:</strong></p>
+                    <ul>
+                        <li>המשלים המותנה: \(P(\bar{A} \mid B) = 1 - P(A \mid B)\)</li>
+                        <li>איחוד מותנה: \(P(A \cup C \mid B) = P(A \mid B) + P(C \mid B) - P(A \cap C \mid B)\)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. תרגיל מעשי: הסתברות מותנית עם טבלה דו-ממדית</h2>
+                    <span class="objective-tag">תרגול טבלאות</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>נתוני התרגיל:</strong> באוכלוסייה \(30\%\) גברים (\(A\)) ו-\(60\%\) מעשנים (\(B\)). כמו כן, \(20\%\) מהאוכלוסייה הם גברים מעשנים (\(A \cap B\)).</p>
+                    
+                    <h4>טבלת ההסתברויות שנבנתה מהנתונים:</h4>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>גבר (\(A\))</th>
+                                <th>אישה (\(\bar{A}\))</th>
+                                <th>סה"כ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>מעשן (\(B\))</strong></td>
+                                <td>0.2</td>
+                                <td>0.4</td>
+                                <td>0.6</td>
+                            </tr>
+                            <tr>
+                                <td><strong>לא מעשן (\(\bar{B}\))</strong></td>
+                                <td>0.1</td>
+                                <td>0.3</td>
+                                <td>0.4</td>
+                            </tr>
+                            <tr>
+                                <td><strong>סה"כ</strong></td>
+                                <td>0.3</td>
+                                <td>0.7</td>
+                                <td>1.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('table_exercises_container')">הצג תרגילים וסעיפים</button>
+                </div>
+
+                <!-- מיכל הסעיפים שמוצג רק בלחיצה על כפתור -->
+                <div id="table_exercises_container" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">שאלות ותרגילים לטבלה (לחץ על כפתור פתרון תחת כל סעיף):</h3>
+
+                    <!-- סעיף א -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. נבחר אדם מעשן מתוך האוכלוסייה, מהי ההסתברות שנבחר גבר?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_a')">הצג פתרון</button>
+                        <div id="q_a" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{0.2}{0.6} = \frac{1}{3} \approx 0.333 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ב -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. נבחר אדם מעשן מתוך האוכלוסייה, מהי ההסתברות שנבחרה אישה?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_b')">הצג פתרון</button>
+                        <div id="q_b" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(\bar{A} \mid B) = \frac{P(\bar{A} \cap B)}{P(B)} = \frac{0.4}{0.6} = \frac{2}{3} \approx 0.667 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ג -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ג. נבחר אדם לא מעשן מתוך האוכלוסייה, מהי ההסתברות שנבחר גבר?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_c')">הצג פתרון</button>
+                        <div id="q_c" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(A \mid \bar{B}) = \frac{P(A \cap \bar{B})}{P(\bar{B})} = \frac{0.1}{0.4} = \frac{1}{4} = 0.25 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ד -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ד. נבחר אדם לא מעשן מתוך האוכלוסייה, מהי ההסתברות שנבחרה אישה?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_d')">הצג פתרון</button>
+                        <div id="q_d" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(\bar{A} \mid \bar{B}) = \frac{P(\bar{A} \cap \bar{B})}{P(\bar{B})} = \frac{0.3}{0.4} = \frac{3}{4} = 0.75 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ה -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ה. נבחר גבר מתוך האוכלוסייה, מהי ההסתברות שהוא מעשן?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_e')">הצג פתרון</button>
+                        <div id="q_e" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(B \mid A) = \frac{P(B \cap A)}{P(A)} = \frac{0.2}{0.3} = \frac{2}{3} \approx 0.667 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ו -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ו. נבחר גבר מתוך האוכלוסייה, מהי ההסתברות שהוא לא מעשן?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_f')">הצג פתרון</button>
+                        <div id="q_f" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(\bar{B} \mid A) = \frac{P(\bar{B} \cap A)}{P(A)} = \frac{0.1}{0.3} = \frac{1}{3} \approx 0.333 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ז -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ז. נבחרה אישה מתוך האוכלוסייה, מהי ההסתברות היא מעשנת?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_g')">הצג פתרון</button>
+                        <div id="q_g" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(B \mid \bar{A}) = \frac{P(B \cap \bar{A})}{P(\bar{A})} = \frac{0.4}{0.7} = \frac{4}{7} \approx 0.571 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ח -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ח. נבחרה אישה מתוך האוכלוסייה, מהי ההסתברות היא לא מעשנת?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('q_h')">הצג פתרון</button>
+                        <div id="q_h" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ P(\bar{B} \mid \bar{A}) = \frac{P(\bar{B} \cap \bar{A})}{P(\bar{A})} = \frac{0.3}{0.7} = \frac{3}{7} \approx 0.429 \]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה בשרשור תמה (מצב לילה/יום) מהחלון הראשי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניהול סמסטר</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --text-color: #333;
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #fff;
+            --btn-bg: #34495e;
+            --btn-hover: #1abc9c;
+            --btn-active: #16a085;
+            --topbar-bg: #ffffff;
+            --topbar-border: #e2e8f0;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --sidebar-bg: #1e1e1e;
+            --sidebar-text: #ffffff;
+            --btn-bg: #2d2d2d;
+            --btn-hover: #00adb5;
+            --btn-active: #007e85;
+            --topbar-bg: #1e1e1e;
+            --topbar-border: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #global-topbar {
+            height: 50px;
+            background-color: var(--topbar-bg);
+            border-bottom: 1px solid var(--topbar-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .topbar-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        #theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            padding: 5px;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        #theme-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        #container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 50px);
+            position: relative;
+        }
+
+        #topics-sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+            z-index: 10;
+        }
+
+        #topics-sidebar.hidden {
+            display: none;
+        }
+
+        #topics-sidebar h2 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .topic-btn {
+            background-color: var(--btn-bg);
+            color: var(--sidebar-text);
+            border: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: right;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .topic-btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .topic-btn.active {
+            background-color: var(--btn-active);
+            font-weight: bold;
+        }
+
+        #main-content {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+
+        #topic-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        .welcome-screen {
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="global-topbar">
+        <div class="topbar-title">מערכת ניהול שיעורים</div>
+        <!-- כפתור החלפת מצב תצוגה בלבד בצד שמאל למעלה -->
+        <button id="theme-toggle-btn" title="החלף מצב תצוגה">🌙</button>
+    </header>
+
+    <div id="container">
+        <aside id="topics-sidebar">
+            <h2>נושאי סמסטר א'</h2>
+        </aside>
+
+        <main id="main-content">
+            <div class="welcome-screen">
+                <h1>ברוכים הבאים למערכת ניהול השיעורים</h1>
+                <p style="margin-top: 10px;">אנא בחר נושא מהתפריט הצדדי כדי להתחיל.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const topics = [
+            { id: 1, name: "לוגיקה למדעי המחשב", folder: "לוגיקה למדעי המחשב" },
+            { id: 2, name: "תקשורת 1", folder: "תקשורת 1" },
+            { id: 3, name: "הסתברות כללית", folder: "הסתברות כללית" },
+            { id: 4, name: "שיטות נומריות", folder: "שיטות נומריות" },
+            { id: 5, name: "מבנה המחשב", folder: "מבנה המחשב" },
+            { id: 6, name: "אלגוריתמים", folder: "אלגוריתמים" }
+        ];
+
+        const topicsSidebar = document.getElementById('topics-sidebar');
+        const mainContent = document.getElementById('main-content');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+
+        let isDarkMode = localStorage.getItem('theme_mode') === 'dark';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            themeToggleBtn.innerText = '☀️';
+        }
+
+        topics.forEach(topic => {
+            const button = document.createElement('button');
+            button.className = 'topic-btn';
+            button.innerText = topic.name;
+            button.onclick = () => loadTopic(topic, button);
+            topicsSidebar.appendChild(button);
+        });
+
+        themeToggleBtn.onclick = () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            themeToggleBtn.innerText = isDarkMode ? '☀️' : '🌙';
+            localStorage.setItem('theme_mode', isDarkMode ? 'dark' : 'light');
+            sendThemeToIframe();
+        };
+
+        function sendThemeToIframe() {
+            const iframe = document.getElementById('topic-frame');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'SET_THEME', isDark: isDarkMode }, '*');
+            }
+        }
+
+        function loadTopic(topic, clickedBtn) {
+            document.querySelectorAll('.topic-btn').forEach(btn => btn.classList.remove('active'));
+            if (clickedBtn) clickedBtn.classList.add('active');
+
+            topicsSidebar.classList.add('hidden');
+
+            const filePath = `${topic.folder}/Main lesson.html`;
+            mainContent.innerHTML = `<iframe id="topic-frame" src="${filePath}"></iframe>`;
+
+            const iframe = document.getElementById('topic-frame');
+            iframe.onload = () => sendThemeToIframe();
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'GO_BACK_TO_TOPICS') {
+                topicsSidebar.classList.remove('hidden');
+                mainContent.innerHTML = `
+                    <div class="welcome-screen">
+                        <h1>ברוכים הבאים למערכת ניהול השיעורים</h1>
+                        <p style="margin-top: 10px;">אנא בחר נושא מהתפריט הצדדי כדי להתחיל.</p>
+                    </div>
+                `;
+            }
+            if (event.data.type === 'REQUEST_THEME') {
+                sendThemeToIframe();
+            }
+        });
+    </script>
+</body>
+</html>

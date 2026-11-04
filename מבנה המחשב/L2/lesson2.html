@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבנה המחשב - סיכום מקיף (שיעור 2 ואלגברה בוליאנית)</title>
+    <!-- MathJax לתצוגה מתמטית נקייה ומקצועית -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .note-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 4px solid var(--warning-color);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>מבנה המחשב - סיכום מקיף ומאוחד</h1>
+        <h2>ביצוע הוראות, אפיקי תקשורת, אלגברה בוליאנית ומעגלים לוגיים</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <!-- חלק א: קובץ 1 (סעיפים 1-5) -->
+                <li><a href="#topic-1">1. מבנה "המחשב הקטון" ורכיבי המעבד</a></li>
+                <li><a href="#topic-2">2. בקרה, קפיצות ותנאים (Jump / Jumptrue)</a></li>
+                <li><a href="#topic-3">3. ארכיטקטורת פסים (HAS & Bus System)</a></li>
+                <li><a href="#topic-4">4. מחזורי קריאה וכתיבה מהזיכרון</a></li>
+                <li><a href="#topic-5">5. סינכרון ושעון פנימי (Clock & Frequency)</a></li>
+                
+                <!-- חלק ב: קובץ 2 (סעיפים 6-17) -->
+                <li><a href="#topic-6">6. אלגברת מיתוג - פונקציות נוספות</a></li>
+                <li><a href="#topic-7">7. רכיבים לוגיים (שערים)</a></li>
+                <li><a href="#topic-8">8. אלגברה בוליאנית - זהויות במשתנה אחד</a></li>
+                <li><a href="#topic-9">9. זהויות בשני משתנים ויותר</a></li>
+                <li><a href="#topic-10">10. כללי צימצום באלגברה בוליאנית</a></li>
+                <li><a href="#topic-11">11. פונקציה בוליאנית וטבלאות אמת</a></li>
+                <li><a href="#topic-12">12. ייצוג אלגברי וצמצום מעגלים</a></li>
+                <li><a href="#topic-13">13. מימוש פונקציות בעזרת שערים</a></li>
+                <li><a href="#topic-14">14. מערכת פעולות שלמה</a></li>
+                <li><a href="#topic-15">15. מימוש חצי-מסכם (Half-Adder)</a></li>
+                <li><a href="#topic-16">16. צמצום מעגל חצי-מסכם</a></li>
+                <li><a href="#topic-17">17. שלבים בתכנון מעגל לוגי</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- ================= חלק א': קובץ 1 ================= -->
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. מבנה "המחשב הקטון" ורכיבי המעבד</h2>
+                    <span class="objective-tag">שקופיות 72-73</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי להבין איך מחשב פועל, אנו משתמשים במודל מופשט ("מחשב צעצוע") המבוסס על ארכיטקטורת פון ניומן:</p>
+                    <ul>
+                        <li><strong>הזיכרון הראשי (Memory):</strong> מערך רציף של תאים (למשל 100 תאים). לכל תא יש <strong>כתובת</strong> (0 עד 99) ו<strong>תוכן</strong> (הוראה או נתון).</li>
+                        <li><strong>יחידת בקרה (Control Unit):</strong>
+                            <ul>
+                                <li><strong>IP (Instruction Pointer):</strong> אוגר המחזיק את הכתובת של ההוראה הבאה לביצוע.</li>
+                                <li><strong>IR (Instruction Register):</strong> אוגר המחזיק את ההוראה הנוכחית שמפוענחת ומבוצעת.</li>
+                            </ul>
+                        </li>
+                        <li><strong>יחידת ביצוע (ALU - Arithmetic Logic Unit):</strong>
+                            <ul>
+                                <li><strong>DR1, DR2 (Data Registers):</strong> אוגרי נתונים פנימיים ומהירים המציבים נתונים לחישוב.</li>
+                                <li><strong>FR (Flags Register):</strong> אוגר דגלים השומר את תוצאת ההשוואה האחרונה.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמה והרחבה: מחזור ההוראה</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>מחזור ההוראה (Fetch-Execute Cycle):</h4>
+                    <p>כל הוראה עוברת שני שלבים מרכזיים:</p>
+                    <ol>
+                        <li><strong>שלב ההבאה (Fetch):</strong> קריאת ההוראה מכתובת ה-IP לתוך ה-IR, וקידום אוטומטי של ה-IP לכתובת הבאה (\(IP \leftarrow IP + 1\)).</li>
+                        <li><strong>שלב הביצוע (Execute):</strong> פענוח ההוראה שב-IR וביצוע הפעולה الנדרשת.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. בקרה, קפיצות ותנאים (Jump / Jumptrue)</h2>
+                    <span class="objective-tag">שקופיות 72-73 (סיכום)</span>
+                </div>
+                <div class="theory-section">
+                    <p>קפיצות בקוד מאפשרות לממש מבני תנאי כמו <code>If-Else</code> או בלולאות:</p>
+                    <ul>
+                        <li><strong><code>jump addr</code>:</strong> קפיצה ללא תנאי. מעדכנת ישירות את \(IP \leftarrow addr\).</li>
+                        <li><strong><code>jumptrue addr</code>:</strong> קפיצה מותנית. הקפיצה מתבצעת רק אם ההשוואה הקודמת הצליחה.</li>
+                    </ul>
+                    <div class="note-box">
+                        <strong>הערת מרצה חשובה לגבי אוגר הדגלים (FR):</strong><br>
+                        בהגדרת המרצה בהרצאה זו, הדגל <strong>0 מסמן "אמת" (השוואה הצליחה)</strong> ו-<strong>1 מסמן "שקר"</strong>.
+                    </div>
+
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>מסלול \(A = B\) (התנאי מתקיים)</th>
+                                <th>מסלול \(A \neq B\) (התנאי לא מתקיים)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>טעינת \(A, B\) לאוגרים <code>DR1, DR2</code></td>
+                                <td>טעינת \(A, B\) לאוגרים <code>DR1, DR2</code></td>
+                            </tr>
+                            <tr>
+                                <td>השוואה: דגל = 0 (אמת)</td>
+                                <td>השוואה: דגל = 1 (שקר)</td>
+                            </tr>
+                            <tr>
+                                <td><code>jumptrue 06</code> <strong>מקפץ ל-06</strong></td>
+                                <td><code>jumptrue 06</code> <strong>לא מקפץ</strong> (ממשיך לשורה 4)</td>
+                            </tr>
+                            <tr>
+                                <td>מבצע ענף If (\(A = 2\)) ואז <code>end</code></td>
+                                <td>מבצע ענף Else (\(B = 2\)), ואז <code>jump 07</code> ל-<code>end</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>סה"כ 6 הוראות מבוצעות</strong></td>
+                                <td><strong>סה"כ 7 הוראות מבוצעות</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex2')">הצג דוגמה והרחבה: למה צריך Jump בלתי מותנה?</button>
+                </div>
+                <div id="ex2" class="panel panel-example">
+                    <h4>חשיבות פקודת <code>jump 07</code> בסוף ענף ה-Else:</h4>
+                    <p>לאחר ביצוע ענף ה-Else (בכתובת 4), המעבד נוטה להמשיך ברצף לכתובת 5 ולכתובת 6. אולם כתובת 6 מכילה את הקוד של ענף ה-If. כדי למנוע זליגה וביצוע כפול של שני הענפים, חייבים פקודת <code>jump 07</code> שמדלגת ישירות לסוף התוכנית.</p>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. ארכיטקטורת פסים (HAS & Bus System)</h2>
+                    <span class="objective-tag">שקופיות 74-75</span>
+                </div>
+                <div class="theory-section">
+                    <p>ארכיטקטורת חומרה (HAS - Hardware System Architecture) ממתגת ומחברת את היחידות השונות (CPU, Memory, I/O) דרך <strong>פסים (Busses)</strong> – אוסף מוליכים חשמליים משותפים:</p>
+                    <ul>
+                        <li><strong>1. פס הכתובות (Address Bus):</strong> מעביר כתובות זיכרון. כיוון הזרם: <strong>חד-כיווני (מה-CPU החוצה)</strong>.</li>
+                        <li><strong>2. פס הנתונים (Data Bus):</strong> מעביר נתונים והוראות בפועל. כיוון הזרם: <strong>דו-כיווני (מעבד \(\leftrightarrow\) זיכרון)</strong>.</li>
+                        <li><strong>3. פס הבקרה (Control Bus):</strong> מעביר אותות שליטה וסוג פעולה (כגון קריאה <code>Read</code> או כתיבה <code>Write</code>).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3')">הצג דוגמה והרחבה: חישוב רוחב פס וזיכרון</button>
+                </div>
+                <div id="ex3" class="panel panel-example">
+                    <h4>רוחב פס והשפעתו:</h4>
+                    <p>מספר המוליכים (החוטים) בפס קובע את כמות המידע או גודל הזיכרון שניתן לנהל:</p>
+                    <ul>
+                        <li>פס כתובות של \(n\) חוטים יכול לייצג \(2^n\) כתובות שונות.</li>
+                    </ul>
+                    <div class="math-block">
+                        \[ \text{16-bit Address Bus} \implies 2^{16} = 65,536 \text{ locations (64 KB)} \]
+                        \[ \text{32-bit Address Bus} \implies 2^{32} \approx 4,294,967,296 \text{ locations (4 GB)} \]
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. מחזורי קריאה וכתיבה מהזיכרון</h2>
+                    <span class="objective-tag">שקופיות 76-77</span>
+                </div>
+                <div class="theory-section">
+                    <p>המעבד מתקשר עם הזיכרון באמצעות שני מחזורים מרכזיים:</p>
+                    
+                    <h4>א. מחזור קריאה (Read Cycle):</h4>
+                    <ol>
+                        <li>המעבד שולח כתובת מבוקשת בפס הכתובות (למשל <code>Address = 125</code>).</li>
+                        <li>המעבד מפעיל אות קריאה בפס הבקרה (<code>Read = 0</code>, כאשר 0 פעיל - Active Low).</li>
+                        <li>הזיכרון מוציא את הנתון לפס הנתונים (<code>Data = Memory[125]</code>) והנתון זורם <strong>אל המעבד</strong>.</li>
+                    </ol>
+
+                    <h4 style="margin-top: 15px;">ב. מחזור כתיבה (Write Cycle):</h4>
+                    <ol>
+                        <li>המעבד שולח כתובת יעד בפס הכתובות (למשל <code>Address = 125</code>).</li>
+                        <li>המעבד מציב את הנתון לכתיבה בפס הנתונים (למשל <code>Data = 0</code>). הנתון זורם <strong>מהמעבד אל הזיכרון</strong>.</li>
+                        <li>המעבד מפעיל אות כתיבה בפס הבקרה (<code>Write = 0</code>). הזיכרון שומר את הנתון בתא.</li>
+                    </ol>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4')">הצג דוגמה והרחבה: טבלת השוואה בין קריאה לכתיבה</button>
+                </div>
+                <div id="ex4" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>מאפיין</th>
+                                <th>מחזור קריאה (Read Cycle)</th>
+                                <th>מחזור כתיבה (Write Cycle)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>פס הכתובות</strong></td>
+                                <td>המעבד שולח כתובת \(\rightarrow\) לזיכרון</td>
+                                <td>המעבד שולח כתובת \(\rightarrow\) לזיכרון</td>
+                            </tr>
+                            <tr>
+                                <td><strong>פס הבקרה</strong></td>
+                                <td><code>Read = 0</code> (Active Low)</td>
+                                <td><code>Write = 0</code> (Active Low)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>פס הנתונים</strong></td>
+                                <td>זיכרון \(\rightarrow\) מעבד (זרימה שמאלה)</td>
+                                <td>מעבד \(\rightarrow\) זיכרון (זרימה ימינה)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. סינכרון ושעון פנימי (Clock & Frequency)</h2>
+                    <span class="objective-tag">שקופיות 78-81</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי לסנכרן את פעולת כל הרכיבים והפסים, המחשב משתמש ב<strong>שעון פנימי (Internal Clock)</strong> המייצר גל ריבועי מתמיד (Square Wave):</p>
+                    <ul>
+                        <li><strong>מחזור שעון (Clock Cycle):</strong> משך הזמן שלוקח לגל לעלות מ-0 ל-1 ולרדת בחזרה ל-0.</li>
+                        <li><strong>תדר השעון (Frequency - \(f\)):</strong> מספר המחזורים בשנייה, נמדד בהרץ (Hz), MHz, או GHz.</li>
+                        <li><strong>זמן מחזור (\(T\)):</strong> מחושב לפי הנוסחה:
+                            <div class="math-block">
+                                \[ T = \frac{1}{f} \]
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="note-box">
+                        <strong>הבחנה קריטית: תדר המעבד \(\neq\) מספר ההוראות בשנייה!</strong><br>
+                        מעבד ב-500MHz אינו מבצע 500 מיליון הוראות בשנייה, מפני שכל הוראה דורשת מספר מחזורי שעון, ופניות לזיכרון חיצוני (או I/O) דורשות מחזורי המתנה נוספים (למשל, במעבד 8086 גישה לזיכרון אורכת 4 מחזורי מכונה).
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5')">הצג דוגמה והרחבה: חישובי תדר וזמן מחזור</button>
+                </div>
+                <div id="ex5" class="panel panel-example">
+                    <h4>חישובי זמן מחזור לדוגמה:</h4>
+                    <ul>
+                        <li>במעבד בתדר \(f = 500 \text{ MHz}\):
+                            <div class="math-block">
+                                \[ T = \frac{1}{500 \times 10^6} = 2 \times 10^{-9} \text{ seconds} = 2 \text{ ns} \]
+                            </div>
+                        </li>
+                        <li>במעבד בתדר \(f = 3 \text{ GHz}\):
+                            <div class="math-block">
+                                \[ T = \frac{1}{3 \times 10^9} \approx 0.33 \times 10^{-9} \text{ seconds} = 0.33 \text{ ns} \]
+                            </div>
+                        </li>
+                    </ul>
+                    <p><strong>מסקנה:</strong> ככל שהתדר גבוה יותר, זמן המחזור \(T\) קצר יותר והמעבד מתקתק מהר יותר.</p>
+                </div>
+            </section>
+
+            <!-- ================= חלק ב': קובץ 2 (מספור מעודכן 6-17) ================= -->
+
+            <!-- נושא 6 -->
+            <section id="topic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. אלגברת מיתוג - פונקציות נוספות</h2>
+                    <span class="objective-tag">שקופית 4</span>
+                </div>
+                <div class="theory-section">
+                    <p>בנוסף לפונקציות הבסיסיות (AND, OR, NOT), קיימות פונקציות מורכבות ומשלימות שימושיות מאוד:</p>
+                    <ul>
+                        <li><strong>NAND:</strong> פונקציה משלימה ל-AND (עבור <span dir="ltr">(A &middot; B)&macr;</span>). מוציאה 0 רק כששתי הכניסות הן 1.</li>
+                        <li><strong>NOR:</strong> פונקציה משלימה ל-OR (עבור <span dir="ltr">(A + B)&macr;</span>). מוציאה 1 רק כששתי הכניסות הן 0.</li>
+                        <li><strong>XOR (Exclusive OR):</strong> "או מוציא" (<span dir="ltr">A &oplus; B</span>). מוציאה 1 כאשר הכניסות שונות זו מזו.</li>
+                        <li><strong>XNOR:</strong> פונקציה משלימה ל-XOR (עבור <span dir="ltr">(A &oplus; B)&macr;</span>). מוציאה 1 אך ורק כאשר שני המשתנים זהים (00 או 11).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex6')">הצג דוגמה: טבלת אמת מרכזת</button>
+                </div>
+                <div id="ex6" class="panel panel-example">
+                    <h4>טבלת אמת השוואתית לפונקציות הנוספות:</h4>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>NAND (<span dir="ltr">(A &middot; B)&macr;</span>)</th>
+                                <th>NOR (<span dir="ltr">(A + B)&macr;</span>)</th>
+                                <th>XOR (<span dir="ltr">A &oplus; B</span>)</th>
+                                <th>XNOR (<span dir="ltr">(A &oplus; B)&macr;</span>)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="topic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. רכיבים לוגיים (שערים)</h2>
+                    <span class="objective-tag">שקופית 5</span>
+                </div>
+                <div class="theory-section">
+                    <p>שערים לוגיים (Logic Gates) הם רכיבי היסוד הפיזיים של כל מערכת ספרתית, המממשים את פונקציות המיתוג ברמת החומרה:</p>
+                    <ul>
+                        <li><strong>שער AND:</strong> מבנה בצורת האות D. מוציא <span dir="ltr">A &middot; B</span>.</li>
+                        <li><strong>שער OR:</strong> גב קעור וחזית מחודדת. מוציא <span dir="ltr">A + B</span>.</li>
+                        <li><strong>שער NOT (מהפך):</strong> משולש עם עיגול בקצה המוצא. מוציא <span dir="ltr">Ā</span>.</li>
+                        <li><strong>העיגול (Bubble) בסמל:</strong> מייצג היפוך לוגי (NOT). הוספת עיגול במוצא של AND נותנת NAND, ובמוצא של OR נותנת NOR.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex7')">הצג דוגמה: זיהוי שערי מיתוג</button>
+                </div>
+                <div id="ex7" class="panel panel-example">
+                    <h4>כלל אצבע לזיהוי שערים:</h4>
+                    <ul>
+                        <li>NAND = AND + Bubble במוצא &rArr; <span dir="ltr">(A &middot; B)&macr;</span></li>
+                        <li>NOR = OR + Bubble במוצא &rArr; <span dir="ltr">(A + B)&macr;</span></li>
+                        <li>XNOR = XOR + Bubble במוצא &rArr; <span dir="ltr">(A &oplus; B)&macr;</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 8 -->
+            <section id="topic-8" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">8. אלגברה בוליאנית - זהויות במשתנה אחד</h2>
+                    <span class="objective-tag">שקופית 6</span>
+                </div>
+                <div class="theory-section">
+                    <p>חוקים בסיסיים לפישוט ביטויים בוליאניים עבור משתנה בודד A:</p>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>פעולת AND</th>
+                                <th>פעולת OR</th>
+                                <th>פעולת NOT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span dir="ltr">A &middot; 0 = 0</span></td>
+                                <td><span dir="ltr">A + 0 = A</span></td>
+                                <td rowspan="4" style="vertical-align: middle;"><span dir="ltr">(Ā)&macr; = A</span></td>
+                            </tr>
+                            <tr>
+                                <td><span dir="ltr">A &middot; 1 = A</span></td>
+                                <td><span dir="ltr">A + 1 = 1</span></td>
+                            </tr>
+                            <tr>
+                                <td><span dir="ltr">A &middot; A = A</span></td>
+                                <td><span dir="ltr">A + A = A</span></td>
+                            </tr>
+                            <tr>
+                                <td><span dir="ltr">A &middot; Ā = 0</span></td>
+                                <td><span dir="ltr">A + Ā = 1</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex8')">הצג דוגמה: עקרון הדואליות</button>
+                </div>
+                <div id="ex8" class="panel panel-example">
+                    <h4>עקרון הדואליות (Dual Principle):</h4>
+                    <p>כל זהות תקפה נשמרת אם מחליפים כל פעולת AND (<span dir="ltr">&middot;</span>) בפעולת OR (<span dir="ltr">+</span>), וכל 0 ב-1 (ולהפך).</p>
+                    <div class="math-block">
+                        A &middot; 1 = A &nbsp;&nbsp;&DoubleLeftRightArrow;&nbsp;&nbsp; A + 0 = A
+                        <br>
+                        A &middot; Ā = 0 &nbsp;&nbsp;&DoubleLeftRightArrow;&nbsp;&nbsp; A + Ā = 1
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 9 -->
+            <section id="topic-9" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">9. זהויות בשני משתנים ויותר</h2>
+                    <span class="objective-tag">שקופית 7</span>
+                </div>
+                <div class="theory-section">
+                    <p>חוקי האלגברה הבוליאנית עבור שני משתנים או יותר:</p>
+                    <ul>
+                        <li><strong>כללי דה-מורגן (DeMorgan):</strong> 
+                            <span dir="ltr">(A &middot; B)&macr; = Ā + B̄</span>,&nbsp;&nbsp;
+                            <span dir="ltr">(A + B)&macr; = Ā &middot; B̄</span>
+                        </li>
+                        <li><strong>כללי החילוף (Commutative):</strong> <span dir="ltr">A + B = B + A</span>,&nbsp;&nbsp;<span dir="ltr">A &middot; B = B &middot; A</span></li>
+                        <li><strong>כללי הקיבוץ (Associative):</strong> <span dir="ltr">A + (B + C) = (A + B) + C</span>,&nbsp;&nbsp;<span dir="ltr">A &middot; (B &middot; C) = (A &middot; B) &middot; C</span></li>
+                        <li><strong>כללי הבליעה (Absorption):</strong> <span dir="ltr">A + (A &middot; B) = A</span>,&nbsp;&nbsp;<span dir="ltr">A &middot; (A + B) = A</span></li>
+                        <li><strong>כללי הפילוג (Distributive):</strong> 
+                            <br>
+                            <span dir="ltr">A &middot; (B + C) = (A &middot; B) + (A &middot; C)</span>
+                            <br>
+                            <span dir="ltr">A + (B &middot; C) = (A + B) &middot; (A + C)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex9')">הצג דוגמה: הוכחת חוק דה-מורגן</button>
+                </div>
+                <div id="ex9" class="panel panel-example">
+                    <h4>הוכחת <span dir="ltr">(A &middot; B)&macr; = Ā + B̄</span> בטבלת אמת:</h4>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>A &middot; B</th>
+                                <th>(A &middot; B)&macr;</th>
+                                <th>Ā</th>
+                                <th>B̄</th>
+                                <th>Ā + B̄</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                            <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                    <p>רואים בבירור כי העמודה של <span dir="ltr">(A &middot; B)&macr;</span> זהה לחלוטין לעמודה של <span dir="ltr">Ā + B̄</span>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 10 -->
+            <section id="topic-10" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">10. כללי צימצום באלגברה בוליאנית</h2>
+                    <span class="objective-tag">שקופית 8</span>
+                </div>
+                <div class="theory-section">
+                    <p>קיצורי דרך מרכזיים לפישוט מהיר של ביטויים בוליאניים:</p>
+                    <div class="math-block">
+                        כלל 1: X + (X &middot; Y) = X
+                        <br>
+                        כלל 2: X &middot; (X + Y) = X
+                        <br>
+                        כלל 3: X + X̄ &middot; Y = X + Y
+                        <br>
+                        כלל 4: X &middot; (X̄ + Y) = X &middot; Y
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex10')">הצג דוגמה: הוכחת כלל צמצום 3</button>
+                </div>
+                <div id="ex10" class="panel panel-example">
+                    <h4>הוכחת <span dir="ltr">X + X̄ &middot; Y = X + Y</span> בעזרת פילוג:</h4>
+                    <div class="math-block">
+                        X + X̄ &middot; Y = (X + X̄) &middot; (X + Y)
+                        <br>
+                        = 1 &middot; (X + Y) = X + Y
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 11 -->
+            <section id="topic-11" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">11. פונקציה בוליאנית וטבלאות אמת</h2>
+                    <span class="objective-tag">שקופית 9</span>
+                </div>
+                <div class="theory-section">
+                    <p>פונקציה בוליאנית מקבלת משתנים בינאריים ומחזירה ערך 0 או 1. עבור n משתנים, בטבלת האמת יהיו <span dir="ltr">2<sup>n</sup></span> שורות שונות לפי סדר ספירה בינארי.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex11')">הצג דוגמה: ניתוח הפונקציה F1 = x y z̄</button>
+                </div>
+                <div id="ex11" class="panel panel-example">
+                    <h4>פונקציה עבור 3 משתנים (<span dir="ltr">2<sup>3</sup> = 8</span> שורות):</h4>
+                    <p>הפונקציה <span dir="ltr">F<sub>1</sub> = x y z̄</span> תהיה שווה ל-1 רק כאשר x=1, y=1, z=0 (שורה 6 בינארית: 110):</p>
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>שורה</th><th>x</th><th>y</th><th>z</th><th>F<sub>1</sub></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                            <tr><td>6</td><td>1</td><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+                            <tr><td>7</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 12 -->
+            <section id="topic-12" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">12. ייצוג אלגברי וצמצום מעגלים</h2>
+                    <span class="objective-tag">שקופית 10</span>
+                </div>
+                <div class="theory-section">
+                    <p>ייצוג אלגברי של פונקציה בוליאנית <strong>אינו יחיד</strong>. ביטויים אלגבריים שונים לחלוטין יכולים לייצג בדיוק את אותה טבלת אמת.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex12')">הצג דוגמה: הוכחת שוויון F3 = F4</button>
+                </div>
+                <div id="ex12" class="panel panel-example">
+                    <h4>הוכחת שוויון אלגברי:</h4>
+                    <p>נתונות הפונקציות <span dir="ltr">F<sub>3</sub> = x̄ ȳ z + x̄ y z + x ȳ</span> ו-<span dir="ltr">F<sub>4</sub> = x ȳ + x̄ z</span>:</p>
+                    <div class="math-block">
+                        F<sub>3</sub> = x̄ z (ȳ + y) + x ȳ = x̄ z &middot; 1 + x ȳ = x̄ z + x ȳ = F<sub>4</sub>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 13 -->
+            <section id="topic-13" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">13. מימוש פונקציות בעזרת שערים לוגיים</h2>
+                    <span class="objective-tag">שקופית 11</span>
+                </div>
+                <div class="theory-section">
+                    <p>פישוט ביטוי בוליאני מוביל באופן ישיר לחיסכון במספר השערים ובמספר הכניסות לשערים בחומרה:</p>
+                    <ul>
+                        <li>מימוש F3 המקורית דרש <strong>6 שערים</strong> (חלקם עם 3 כניסות).</li>
+                        <li>מימוש F4 המצומצמת דורש <strong>5 שערים בלבד</strong> (כולם עם 2 כניסות).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex13')">הצג דוגמה: חשיבות הצמצום ההנדסי</button>
+                </div>
+                <div id="ex13" class="panel panel-example">
+                    <h4>יתרונות הפישוט בחומרה:</h4>
+                    <p>מעגל מצומצם תופס פחות שטח רכיב בסיליקון, צורך פחות הספק חשמלי, מייצר פחות חום, ופועל במהירות גבוהה יותר.</p>
+                </div>
+            </section>
+
+            <!-- נושא 14 -->
+            <section id="topic-14" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">14. מערכת פעולות שלמה</h2>
+                    <span class="objective-tag">שקופית 24</span>
+                </div>
+                <div class="theory-section">
+                    <p>קבוצת אופרטורים נקראת <strong>"מערכת שלמה"</strong> אם ניתן לתאר וליצור באמצעותה כל פונקציית מיתוג אפשרית:</p>
+                    <ul>
+                        <li>{AND, OR, NOT} היא מערכת שלמה.</li>
+                        <li>{AND, NOT} ו-{OR, NOT} הן מערכות שלמות (לפי דה-מורגן).</li>
+                        <li><strong>שער NAND לבדו או שער NOR לבדו</strong> מהווים כל אחד מערכת שלמה יחידה!</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex14')">הצג דוגמה: מימוש כל השערים מ-NAND בלבד</button>
+                </div>
+                <div id="ex14" class="panel panel-example">
+                    <h4>בניית פעולות יסוד באמצעות שער NAND בלבד:</h4>
+                    <div class="math-block">
+                        NOT: Ā = NAND(A, A)
+                        <br>
+                        AND: A &middot; B = NOT(NAND(A, B))
+                        <br>
+                        OR: A + B = NAND(Ā, B̄)
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 15 -->
+            <section id="topic-15" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">15. מימוש חצי-מסכם (Half-Adder)</h2>
+                    <span class="objective-tag">שקופיות 25-26</span>
+                </div>
+                <div class="theory-section">
+                    <p>חצי-מסכם הוא מעגל המחבר שתי סיביות בינאריות (A, B) ומפיק סיבית סכום (S) וסיבית נשא (C):</p>
+                    <div class="math-block">
+                        S(A, B) = Ā B + A B̄ = A &oplus; B
+                        <br>
+                        C(A, B) = A &middot; B
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex15')">הצג דוגמה: טבלת אמת של חצי-מסכם</button>
+                </div>
+                <div id="ex15" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>A</th><th>B</th><th>S (סכום)</th><th>C (נשא)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 16 -->
+            <section id="topic-16" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">16. צמצום מעגל חצי-מסכם</h2>
+                    <span class="objective-tag">שקופית 27</span>
+                </div>
+                <div class="theory-section">
+                    <p>על ידי שיתוף רכיבים אלגברי, ניתן לצמצם את מעגל החצי-מסכם מ-6 שערים ל-<strong>4 שערים בלבד</strong>:</p>
+                    <div class="math-block">
+                        S = (A &middot; B)&macr; &middot; (A + B)
+                        <br>
+                        C = ((A &middot; B)&macr;)&macr; = A &middot; B
+                    </div>
+                    <p>במעגל זה משתמשים בשער NAND אחד שמחשב את <span dir="ltr">(A &middot; B)&macr;</span>, והתוצאה שלו משמשת גם לחישוב S וגם לחישוב C (בעזרת שער NOT).</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex16')">הצג דוגמה: רשימת 4 השערים במעגל המצומצם</button>
+                </div>
+                <div id="ex16" class="panel panel-example">
+                    <h4>ארבעת השערים במעגל הממוטב:</h4>
+                    <ol>
+                        <li>שער OR שמחשב את <span dir="ltr">A + B</span>.</li>
+                        <li>שער NAND שמחשב את <span dir="ltr">(A &middot; B)&macr;</span>.</li>
+                        <li>שער AND שמחבר את שניהם ומפיק את <span dir="ltr">S = (A &middot; B)&macr; &middot; (A + B)</span>.</li>
+                        <li>שער NOT ההופך את מוצא ה-NAND ומפיק את <span dir="ltr">C = A &middot; B</span>.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 17 -->
+            <section id="topic-17" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">17. שלבים בתכנון מעגל לוגי</h2>
+                    <span class="objective-tag">שקופית 28</span>
+                </div>
+                <div class="theory-section">
+                    <p>מתודולוגיית העבודה התקנית לתכנון מעגל ספרתי:</p>
+                    <ol>
+                        <li><strong>הגדרת הבעיה:</strong> במילים או באמצעות טבלת אמת.</li>
+                        <li><strong>רישום ביטוי בוליאני:</strong> חילוץ הפונקציות מתוך הטבלה.</li>
+                        <li><strong>פישוט הביטוי:</strong> אופטימיזציה של מספר השערים וסוגי השערים.</li>
+                        <li><strong>שרטוט המעגל:</strong> סרטוט הדיאגרמה הלוגית הסופית.</li>
+                    </ol>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex17')">הצג דוגמה: סיכום תהליך התכנון</button>
+                </div>
+                <div id="ex17" class="panel panel-example">
+                    <h4>דוגמה מעשית מתהליך החצי-מסכם:</h4>
+                    <p>1. הגדרה (חיבור 2 סיביות) &rarr; 2. טבלת אמת וביטויים (<span dir="ltr">S = Ā B + A B̄, C = A &middot; B</span>) &rarr; 3. פישוט ל-4 שערים &rarr; 4. שרטוט המעגל הסופי.</p>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה בשרשור תמה (מצב לילה/יום) מהחלון הראשי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('open');
+            }
+        }
+    </script>
+</body>
+</html>

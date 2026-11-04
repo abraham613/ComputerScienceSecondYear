@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבנה המחשב - סיכום הרצאה: ארכיטקטורה של מחשב פשוט ואוסף הוראות (ISA)</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .highlight-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-right: 3px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>מבנה המחשב - הרצאה</h1>
+        <h2>סיכום שלב אחר שלב: ארכיטקטורת מחשב פשוט ואוסף הוראות (ISA) (שקופיות 33-72)</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-33">1. ארכיטקטורה של מחשב פשוט וזיכרון</a></li>
+                <li><a href="#subtopic-36">2. יחידת הביצוע (ALU) ואוגרים פנימיים</a></li>
+                <li><a href="#subtopic-39">3. הגדרת אוסף ההוראות (ISA)</a></li>
+                <li><a href="#subtopic-44">4. הוראות השמה (MOV) וקידודן</a></li>
+                <li><a href="#subtopic-49">5. הוראות חיבור (ADD) ותוכנית ראשונה</a></li>
+                <li><a href="#subtopic-52">6. טעינת תוכנית ומחזור הבאה-ביצוע</a></li>
+                <li><a href="#subtopic-60">7. סיום תוכנית והוראת השוואה (Compare)</a></li>
+                <li><a href="#subtopic-65">8. הוראות קפיצה מותנית ובלתי מותנית</a></li>
+                <li><a href="#subtopic-68">9. תרגום תוכנית עם תנאי (If-Else) וביצועה</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-33" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. ארכיטקטורה של מחשב פשוט וזיכרון (שקופיות 33-35)</h2>
+                    <span class="objective-tag">שקופיות 33 - 35</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי להבין כיצד מעבד פועל, מתכננים "מחשב צעצוע" פשוט בארכיטקטורת פון ניומן המאחסן בזיכרון גם נתונים וגם הוראות.</p>
+                    <ul>
+                        <li><strong>מבנה הזיכרון:</strong> בנוי כמערך חד-ממדי של 100 תאים (כתובות 0 עד 99). כל תא מכיל מספר עשרוני בן 6 ספרות שיכול להיות הוראה, נתון, או כתובת.</li>
+                        <li><strong>פעולות זיכרון:</strong> המעבד יכול לפנות לכל תא בזיכרון כדי לקרוא את תוכנו או לכתוב אליו נתון.</li>
+                        <li><strong>חלוקת המעבד:</strong> המעבד מורכב מ<strong>יחידת בקרה</strong> (המטפלת בשלב ההבאה) ו<strong>יחידת ביצוע</strong> (ALU לחישובים).</li>
+                        <li><strong>אוגרים מרכזיים ביחידת הבקרה:</strong>
+                            <ul>
+                                <li><strong>IP (Instruction Pointer):</strong> מצביע להוראה, שומר את כתובת ההוראה הבאה לביצוע.</li>
+                                <li><strong>IR (Instruction Register):</strong> אוגר הוראה, שומר את תוכן ההוראה שהובאה מהזיכרון אל המעבד.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמת מבנה תא זיכרון</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>דוגמה להמחשת הזיכרון והאוגרים:</h4>
+                    <p>בזיכרון בן 100 תאים, תא מספר 0 יכול להכיל את ההוראה <code>041027</code> ותא מספר 10 יכול להכיל את הערך הנתוני <code>23</code>. אוגר ה-IP מחזיק את מספר הכתובת הנוכחית (למשל 0) ואוגר ה-IR מחזיק את ההוראה המלאה שנקראה.</p>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-36" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. יחידת הביצוע (ALU) ואוגרים פנימיים (שקופיות 36-38)</h2>
+                    <span class="objective-tag">שקופיות 36 - 38</span>
+                </div>
+                <div class="theory-section">
+                    <p>יחידת האריתמטיקה והלוגיקה (ALU) אחראית על ביצוע הפעולות בפועל.</p>
+                    <ul>
+                        <li><strong>אוגרי נתונים (DR1, DR2):</strong> שני אוגרים מהירים הממוקמים בתוך המעבד ומשמשים לשמירת האופרנדים שעליהם ה-ALU מבצע פעולות אריתמטיות ולוגיות.</li>
+                        <li><strong>אוגר דגלים (FR - Flag Register):</strong> שומר חיוויים ותוצאות לוואי של פעולות (כגון האם התוצאה אפס, שלילית, או תוצאת השוואה של שוויון אמת/שקר).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-39" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. הגדרת אוסף ההוראות של המחשב הפשוט - ISA (שקופיות 39-43)</h2>
+                    <span class="objective-tag">שקופיות 39 - 43</span>
+                </div>
+                <div class="theory-section">
+                    <p>אוסף ההוראות מגדיר את שפת המכונה של המעבד ואת אופן כתיבת הפקודות.</p>
+                    <ul>
+                        <li><strong>מבנה ההוראה:</strong> מורכבת מ<strong>אופרקוד (Opcode)</strong> שמציין את סוג הפעולה, ומשתנה של 1 עד 2 <strong>אופרנדים</strong> (נתון, אוגר, או כתובת זיכרון).</li>
+                        <li><strong>אילוץ חומרה:</strong> כדי לפשט את פענוח החומרה, כל הוראה במחשב הפשוט נשמרת בשלמותה בתא זיכרון יחיד באורך של עד 6 ספרות עשרוניות.</li>
+                        <li><strong>קבוצות ההוראות במחשב:</strong> הוראות השמה, הוראות חישוב בסיסיות, הוראות השוואה, הוראות קפיצה בלתי מותנות, והוראות קפיצה מותנות.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-44" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. הוראות השמה (MOV) וקידודן (שקופיות 44-48)</h2>
+                    <span class="objective-tag">שקופיות 44 - 48</span>
+                </div>
+                <div class="theory-section">
+                    <p>הוראת ההשמה אחראית על העברת נתונים ממקום אחד למשנהו (מקור ליעד) מבלי לשנות את מקור הנתון.</p>
+                    <ul>
+                        <li><strong>תחביר:</strong> <code>mov אופרנד1, אופרנד2</code> (משמעות: אופרנד 1 מקבל את תוכן אופרנד 2).</li>
+                        <li><strong>אילוץ:</strong> אופרנד 1 חייב להיות אוגר (<code>DR1</code> או <code>DR2</code>), ואופרנד 2 יכול להיות קבוע, אוגר אחר, או תא בזיכרון.</li>
+                        <li><strong>קודי פעולה (Opcodes):</strong>
+                            <ul>
+                                <li><code>01</code>: <code>mov1 register, constant</code> (שים קבוע באוגר)</li>
+                                <li><code>02</code>: <code>mov2 register1, register2</code> (שים תוכן אוגר באוגר)</li>
+                                <li><code>03</code>: <code>mov3 register, memory</code> (שים תוכן תא זיכרון באוגר)</li>
+                                <li><code>04</code>: <code>mov4 memory, constant</code> (שים קבוע בתא זיכרון)</li>
+                                <li><code>05</code>: <code>mov5 memory, register</code> (שים תוכן אוגר בתא זיכרון)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4')">הצג דוגמת פורמט קידוד הוראה</button>
+                </div>
+                <div id="ex4" class="panel panel-example">
+                    <h4>מבנה קידוד קבוע בתא בן 6 ספרות:</h4>
+                    <p>ההוראה מחולקת לזוגות ספרות: <code>xx yy zz</code> כאשר <code>xx</code> הוא קוד הפעולה, <code>yy</code> הוא אופרנד 1, ודירוג <code>zz</code> הוא אופרנד. לדוגמה: <code>010127</code> פירושו פעולה <code>01</code> (mov1), אוגר <code>01</code> (DR1), וקבוע <code>27</code>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-49" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. הוראות חיבור (ADD) ותוכנית ראשונה לדוגמה (שקופיות 49-51)</h2>
+                    <span class="objective-tag">שקופיות 49 - 51</span>
+                </div>
+                <div class="theory-section">
+                    <p>הוראת החיבור מאפשרת לבצע פעולות אריתמטיות בין נתונים.</p>
+                    <ul>
+                        <li><strong>תחביר ואילוצים:</strong> <code>add אופרנד1, אופרנד2</code> כאשר אופרנד 1 חייב להיות אוגר (<code>DR1</code> או <code>DR2</code>) ואופרנד 2 הוא קבוע או אוגר. תוצאת החיבור נשמרת תמיד באופרנד 1.</li>
+                        <li><strong>קודי חיבור:</strong> <code>06</code> עבור חיבור קבוע לאוגר, וסוד <code>07</code> עבור חיבור תוכן שני אוגרים.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5')">הצג דוגמת תוכנית חיבור מלאה</button>
+                </div>
+                <div id="ex5" class="panel panel-example">
+                    <h4>דוגמה לביצוע חישוב A = A + B:</h4>
+                    <p>כדי לחבר שני משתנים המאוחסנים בזיכרון (למשל בכתובות 10 ו-11), טוענים אותם קודם לאוגרים בעזרת <code>mov3</code>, מבצעים <code>add2 DR1, DR2</code>, ושומרים את התוצאה חזרה לזיכרון באמצעות <code>mov5</code>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="subtopic-52" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. טעינת תוכנית ומחזור הבאה-ביצוע (Fetch-Execute) (שקופיות 52-59)</h2>
+                    <span class="objective-tag">שקופיות 52 - 59</span>
+                </div>
+                <div class="theory-section">
+                    <p>התהליך המחזורי שבו המעבד מריץ את הוראות התוכנית מתוך הזיכרון.</p>
+                    <ul>
+                        <li><strong>שלב ההבאה (Fetch):</strong> המעבד קורא את ההוראה מהזיכרון לפי הכתובת השמורה ב-IP ומאחסן אותה ב-IR, ולאחר מכן מקדם אוטומטית את אוגר ה-IP ב-1.</li>
+                        <li><strong>פענוח (Decode):</strong> יחידת הבקרה מפענחת את קוד הפעולה בעזרת מילון ה-ISA.</li>
+                        <li><strong>שלב הביצוע (Execute):</strong> המעבד מבצע בפועל את הפעולה הנדרשת (כגון כתיבה לזיכרון או טעינה לאוגר).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="subtopic-60" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. סיום תוכנית והוראת השוואה (Compare) (שקופיות 60-64)</h2>
+                    <span class="objective-tag">שקופיות 60 - 64</span>
+                </div>
+                <div class="theory-section">
+                    <p>מנגנונים לבקרת זרימת התוכנית והפסקתה.</p>
+                    <ul>
+                        <li><strong>סיום תוכנית:</strong> מתבצע לרוב באמצעות הוראת עצירה ייעודית חסרת אופרנדים (לדוגמה קוד <code>00</code> - Halt).</li>
+                        <li><strong>הוראת השוואה (Compare):</strong> משווה בין שני ערכים (אופרנד 1 חייב להיות אוגר, ואופרנד 2 קבוע או אוגר).</li>
+                        <li><strong>אוגר דגלים ותוצאה:</strong> תוצאת ההשוואה מעדכנת את אוגר הדגלים (FR) בערך <code>1</code> (אמת / שווים) או <code>0</code> (שקר / לא שווים).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 8 -->
+            <section id="subtopic-65" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">8. הוראות קפיצה מותנית ובלתי מותנית (שקופיות 65-67)</h2>
+                    <span class="objective-tag">שקופיות 65 - 67</span>
+                </div>
+                <div class="theory-section">
+                    <p>פקודות המאפשרות לשנות את סדר הריצה הליניארי של התוכנית.</p>
+                    <ul>
+                        <li><strong>קפיצה מותנית (<code>jumptrue operand</code> - קוד 10):</strong> בודקת את אוגר הדגלים. אם ערכו הוא 1, המעבד מעדכן ישירות את אוגר ה-IP לכתובת היעד שצוינה כאופרנד; אחרת, ממשיך כרגיל. מקביל לפקודת <code>if</code> בשפה עילית.</li>
+                        <li><strong>קפיצה בלתי מותנית (<code>jump operand</code> - קוד 11):</strong> מעדכנת תמיד את אוגר ה-IP לכתובת היעד ללא תלות באוגר הדגלים.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 9 -->
+            <section id="subtopic-68" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">9. תרגום תוכנית עם תנאי (If-Else) וביצועה (שקופיות 68-72)</h2>
+                    <span class="objective-tag">שקופיות 68 - 72</span>
+                </div>
+                <div class="theory-section">
+                    <p>מימוש מבני בקרה מתקדמים בשפת מכונה של המחשב הפשוט.</p>
+                    <ul>
+                        <li><strong>שילוב פקודות:</strong> מבנה <code>If-Else</code> בשפה עילית מתורגם לרצף הכולל טעינה לאוגרים, השוואה (<code>compare2</code>), קפיצה מותנית (<code>jumptrue</code>) המדלגת לענף האמת או השקר, ושימוש בקפיצה בלתי מותנית (<code>jump</code>) כדי לעקוף את ענף ה-Else בסיום.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex9')">הצג דוגמת זרימת ביצוע תנאי</button>
+                </div>
+                <div id="ex9" class="panel panel-example">
+                    <h4>המחשת פעולת התנאי:</h4>
+                    <p>כאשר שני משתנים שווים, אוגר הדגלים מקבל 1, פקודת ה-<code>jumptrue</code> מצליחה ומעדכנת את ה-IP ישירות לכתובת ענף ה-Else בזיכרון, ובכך מדלגת על שורות הקוד האחרות.</p>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // קליטת הודעות מצב לילה/יום מהעמוד הראשי (Main lesson) בלבד
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

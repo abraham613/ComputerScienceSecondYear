@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אלגוריתמים 1 - שיעור 1: הפרד ומשול וסיבוכיות</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --panel-q-bg: #fff8f0;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --panel-q-bg: #2d241e;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1rem 1rem 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercise {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercise {
+            background-color: var(--panel-q-bg);
+            border-color: var(--warning-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .highlight-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 3px solid var(--warning-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>אלגוריתמים 1 - סיבוכיות, חיפוש ורקורסיה</h1>
+        <h2>שיעור 1: מבוא להפרד ומשול, חיפוש בינארי, מיון מיזוג ומשפט המאסטר</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-1">1. חזרה: סיבוכיות ולולאות</a></li>
+                <li><a href="#subtopic-2">2. הרעיון של הפרד ומשול</a></li>
+                <li><a href="#subtopic-3">3. חיפוש בינארי (Binary Search)</a></li>
+                <li><a href="#subtopic-4">4. מיון מיזוג (Merge Sort)</a></li>
+                <li><a href="#subtopic-5">5. שיטת האיטרציה (פתיחת הנוסחה)</a></li>
+                <li><a href="#subtopic-6">6. משפט המאסטר (Master Theorem)</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. חזרה: מה זו סיבוכיות ואיך מחשבים אותה</h2>
+                    <span class="objective-tag">יעד: חישוב סיבוכיות וסימוני O, Omega, Theta</span>
+                </div>
+                <div class="theory-section">
+                    <p>לא מודדים זמן ריצה בשניות כי הוא תלוי במחשב, אלא סופרים פעולות בסיסיות (צעדים) כפונקציה של גודל הקלט <span dir="ltr">n</span>. מתעלמים מקבועים ומאיברים קטנים.</p>
+                    <ul>
+                        <li><strong>סדר גדילה (מהאיטי למהיר):</strong> <span dir="ltr">1 &lt; log n &lt; &radic;n &lt; n &lt; n log n &lt; n<sup>2</sup> &lt; n<sup>3</sup> &lt; 2<sup>n</sup> &lt; n!</span></li>
+                        <li><strong>סימונים אסימפטוטיים:</strong> <span dir="ltr">O</span> (חסם עליון), <span dir="ltr">&Omega;</span> (חסם תחתון), <span dir="ltr">&Theta;</span> (חסם הדוק).</li>
+                        <li><strong>לולאות:</strong> ברצף מחברים, בלולאות מקוננות כופלים. לולאה שמחלקת ב-2 נותנת <span dir="ltr">&Theta;(log n)</span>.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. הרעיון של הפרד ומשול (Divide and Conquer)</h2>
+                    <span class="objective-tag">יעד: שלושת השלבים ונוסחת נסיגה</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטה לפתרון בעיות על ידי פירוקן לתתי-בעיות קטנות:</p>
+                    <ol style="padding-right: 20px;">
+                        <li><strong>הפרד (Divide):</strong> חלוקת הבעיה לתתי-בעיות קטנות מאותו סוג.</li>
+                        <li><strong>משול (Conquer):</strong> פתרון כל תת-בעיה ברקורסיה.</li>
+                        <li><strong>צרף (Combine):</strong> חיבור הפתרונות לפתרון כולל.</li>
+                    </ol>
+                    <p style="margin-top: 10px;"><strong>נוסחת נסיגה כללית:</strong> <span dir="ltr">T(n) = a &middot; T(n/b) + f(n)</span>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. חיפוש בינארי (Binary Search)</h2>
+                    <span class="objective-tag">יעד: אלגוריתם חיפוש במערך ממוין בצורה יעילה</span>
+                </div>
+                <div class="theory-section">
+                    <p>בכל שלב משווים את הערך המבוקש לאמצע המערך, וזורקים חצי מהנתונים.</p>
+                    <ul>
+                        <li><strong>סיבוכיות:</strong> <span dir="ltr">T(n) = T(n/2) + 1</span>, והפתרון הוא <span dir="ltr">&Theta;(log n)</span>.</li>
+                        <li><strong>תנאי הכרחי:</strong> המערך חייב להיות ממוין.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_bs')">הצג דוגמה קצרה</button>
+                </div>
+                <div id="ex_bs" class="panel panel-example">
+                    <h4>דוגמה לחיפוש בינארי</h4>
+                    <p>במערך של 1,000,000 איברים, חיפוש בינארי ידרוש לכל היותר כ-20 השוואות בלבד (לעומת מיליון בחיפוש רגיל)!</p>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. מיון מיזוג (Merge Sort)</h2>
+                    <span class="objective-tag">יעד: מיון יעיל בשיטת הפרד ומשול</span>
+                </div>
+                <div class="theory-section">
+                    <p>חותכים את המערך לחצאים, ממיינים כל חצי ברקורסיה, וממזגים את החצאים הממוינים למערך אחד מושלם.</p>
+                    <ul>
+                        <li><strong>נוסחת נסיגה:</strong> <span dir="ltr">T(n) = 2T(n/2) + n</span>.</li>
+                        <li><strong>סיבוכיות:</strong> <span dir="ltr">&Theta;(n log n)</span>.</li>
+                        <li><strong>חיסרון בולט:</strong> דורש זיכרון נוסף לצורך המיזוג (<span dir="ltr">&Theta;(n)</span>).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. שיטת האיטרציה (פתיחת הנוסחה)</h2>
+                    <span class="objective-tag">יעד: פתרון נוסחאות נסיגה ידנית</span>
+                </div>
+                <div class="theory-section">
+                    <p>מתכון פשוט לפתיחת נוסחאות נסיגה ידנית:</p>
+                    <ol style="padding-right: 20px;">
+                        <li>מציבים את הנוסחה בתוך עצמה 2-3 פעמים.</li>
+                        <li>מזהים תבנית כללית לאחר <span dir="ltr">k</span> הצבות.</li>
+                        <li>מוצאים מתי מגיעים לבסיס הרקורסיה (<span dir="ltr">n = 1</span>).</li>
+                        <li>מציבים ומפשטים בעזרת סכומים מוכרים (כמו סדרה חשבונית או הנדסית).</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="subtopic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. משפט המאסטר (Master Theorem)</h2>
+                    <span class="objective-tag">יעד: פתרון מהיר לנוסחאות נסיגה</span>
+                </div>
+                <div class="theory-section">
+                    <p>נוסחה מוכנה למציאת סיבוכיות של נוסחאות מהצורה <span dir="ltr">T(n) = a &middot; T(n/b) + f(n)</span> בלי פתיחה ידנית:</p>
+                    <ul>
+                        <li><strong>מקרה 1 (העלים מנצחים):</strong> אם <span dir="ltr">f(n)</span> קטנה פולינומית מ-<span dir="ltr">n<sup>log<sub>b</sub> a</sup></span>, אז <span dir="ltr">T(n) = &Theta;(n<sup>log<sub>b</sub> a</sup>)</span>.</li>
+                        <li><strong>מקרה 2 (תיקו):</strong> אם <span dir="ltr">f(n)</span> שווה בסדר גודל ל-<span dir="ltr">n<sup>log<sub>b</sub> a</sup></span>, אז <span dir="ltr">T(n) = &Theta;(n<sup>log<sub>b</sub> a</sup> &middot; log n)</span>.</li>
+                        <li><strong>מקרה 3 (השורש מנצח):</strong> אם <span dir="ltr">f(n)</span> גדולה פולינומית מ-<span dir="ltr">n<sup>log<sub>b</sub> a</sup></span> ובכפוף לתנאי הרגולריות, אז <span dir="ltr">T(n) = &Theta;(f(n))</span>.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_master')">הצג דוגמה קצרה</button>
+                </div>
+                <div id="ex_master" class="panel panel-example">
+                    <h4>דוגמה מעשית לשימוש במשפט המאסטר (מיון מיזוג)</h4>
+                    <p>נתונה נוסחת הנסיגה של אלגוריתם מיון מיזוג:</p>
+                    <p dir="ltr" style="text-align: right; font-weight: bold; margin: 8px 0;">T(n) = 2T(n/2) + n</p>
+                    <ol style="padding-right: 20px; margin-top: 8px;">
+                        <li><strong>זיהוי הפרמטרים:</strong> <span dir="ltr">a = 2</span>, <span dir="ltr">b = 2</span>, ו-<span dir="ltr">f(n) = n</span>.</li>
+                        <li><strong>חישוב מספר העלים:</strong> <span dir="ltr">n<sup>log<sub>2</sub> 2</sup> = n<sup>1</sup> = n</span>.</li>
+                        <li><strong>השוואה (תחרות):</strong> העבודה בעלים היא <span dir="ltr">n</span> והעבודה בשורש היא <span dir="ltr">f(n) = n</span>. שניהם שווים (<span dir="ltr">n</span> מול <span dir="ltr">n</span>), ולכן זהו <strong>מקרה 2 (תיקו)</strong>.</li>
+                        <li><strong>תוצאה סופית:</strong> מכיוון שמדובר במקרה 2, מכפילים ב-<span dir="ltr">log n</span> ומקבלים <span dir="ltr">&Theta;(n log n)</span>.</li>
+                    </ol>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
