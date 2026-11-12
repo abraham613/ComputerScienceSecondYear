@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיטות נומריות - שיעור: שיטת החצייה ושיטת המיקום השגוי</title>
+    
+    <!-- MathJax support -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --panel-q-bg: #fff8f0;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --panel-q-bg: #2d241e;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1rem 1rem 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercise {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+            line-height: 1.6;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercise {
+            background-color: var(--panel-q-bg);
+            border-color: var(--warning-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .highlight-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 3px solid var(--warning-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .formula-box {
+            background-color: rgba(52, 152, 219, 0.08);
+            border: 1px dashed var(--accent-color);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>שיטות נומריות - סיכום שיעור</h1>
+        <h2>שיטת החצייה (Bisection) ושיטת המיקום השגוי (Regula Falsi)</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-1">1. משפט ערך הביניים והערכת שגיאה</a></li>
+                <li><a href="#subtopic-2">2. הגדרת סדר וקצב התכנסות</a></li>
+                <li><a href="#subtopic-3">3. תרגיל פתור מלא בשיטת החצייה</a></li>
+                <li><a href="#subtopic-4">4. חישוב מראש של מספר האיטרציות</a></li>
+                <li><a href="#subtopic-5">5. שיטת המיקום השגוי (Regula Falsi)</a></li>
+                <li><a href="#subtopic-6">6. ניתוח תנאי עצירה ונקודות תורפה</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. משפט ערך הביניים וחוק חסם השגיאה בחצייה</h2>
+                    <span class="objective-tag">יעד: הגדרת חסם השגיאה העליון</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטת החצייה מתבססת על <strong>משפט ערך הביניים</strong> למציאת שורשים בקטע $[a,b]$.</p>
+                    <ul>
+                        <li><strong>תנאי סף:</strong> הפונקציה $f(x)$ רציפה בקטע $[a,b]$ ומתקיים $f(a) \cdot f(b) < 0$.</li>
+                        <li><strong>סדרת הקירובים:</strong> מייצרים סדרת אמצעי קטעים $\{c_n\}_{n=0}^\infty$. בכל שלב בוחרים את התת-קטע שבו הסימנים מתהפכים.</li>
+                    </ul>
+
+                    <div class="formula-box">
+                        <strong>חסם השגיאה באיטרציה ה-$n$:</strong><br>
+                        $$|\alpha - c_n| \le \frac{1}{2^{n+1}}(b - a)$$
+                    </div>
+                    <p>כאשר $n \to \infty$, השגיאה שואפת לאפס: $|\alpha - c_n| \xrightarrow[n \to \infty]{} 0$.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1_details')">הצג פיתוח מספר איטרציות מבוקש</button>
+                </div>
+                <div id="ex1_details" class="panel panel-example">
+                    <h4>דרישה לדיוק $\delta$:</h4>
+                    <p>כדי שהשגיאה תהיה קטנה מ-$\delta$, דורשים:</p>
+                    $$\frac{1}{2^{n+1}}(b-a) < \delta \implies 2^{n+1} > \frac{b-a}{\delta}$$
+                    <p>הפעלת לוגריתם בבסיס 2 והעברת אגף מעבירה אותנו לנוסחה המפורשת למספר האיטרציות:</p>
+                    <div class="highlight-box">
+                        $$\boxed{n > \log_2\left(\frac{b-a}{\delta}\right) - 1}$$
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. הגדרת סדר ($r$) וקצב ($k$) התכנסות</h2>
+                    <span class="objective-tag">יעד: סיווג מהירות ההתכנסות הנומרית</span>
+                </div>
+                <div class="theory-section">
+                    <p>תהי סדרה $\{x_n\}$ המתכנסת לשורש $\alpha$, ותהי השגיאה באיטרציה ה-$n$ מוגדרת כ-$\Delta_n = \alpha - x_n$.</p>
+                    <p>אם קיימים קבועים $r > 0$ ו-$k \neq 0$ כך שמתקיים הגבול:</p>
+                    $$\lim_{n \to \infty} \frac{|\Delta_{n+1}|}{|\Delta_n|^r} = \lim_{n \to \infty} \frac{|\alpha - x_{n+1}|}{|\alpha - x_n|^r} = k$$
+                    <ul>
+                        <li><strong>$r$</strong> - סדר ההתכנסות (Order of Convergence).</li>
+                        <li><strong>$k$</strong> - קצב ההתכנסות (Rate of Convergence).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex2_cases')">הצג מקרים פרטיים והוכחה לחצייה</button>
+                </div>
+                <div id="ex2_cases" class="panel panel-example">
+                    <h4>מקרים פרטיים נפוצים:</h4>
+                    <ul>
+                        <li>אם $r = 1$ ו-$k < 1$: <strong>התכנסות ליניארית</strong>.</li>
+                        <li>אם $r = 2$: <strong>התכנסות ריבועית</strong>.</li>
+                    </ul>
+                    <hr style="margin: 10px 0;">
+                    <h4>סדר ההתכנסות של שיטת החצייה:</h4>
+                    $$\lim_{n \to \infty} \frac{|\alpha - x_{n+1}|}{|\alpha - x_n|} = \frac{\frac{1}{2^{n+2}}(b-a)}{\frac{1}{2^{n+1}}(b-a)} = \frac{1}{2}$$
+                    <p>מכיוון ש-$r = 1$ ו-$k = \frac{1}{2} < 1$, <strong>ההתכנסות של שיטת החצייה היא ליניארית בקצב $\frac{1}{2}$</strong>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. תרגיל פתור מלא: שיטת החצייה</h2>
+                    <span class="objective-tag">יעד: יישום אלגוריתמי עד עצירה</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>תרגיל:</strong> מצא קירוב לשורש הפונקציה $f(x) = e^x - 3x$ בקטע $[1,2]$ עבור דיוק מבוקש $\varepsilon_x = 0.1$.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3_sol')">הצג פתרון מלא שלב אחר שלב</button>
+                </div>
+                <div id="ex3_sol" class="panel panel-example">
+                    <h4>פתרון מלא:</h4>
+                    <p><strong>בדיקת קצוות:</strong> $f(1) = e^1 - 3 \approx -0.2817 < 0$, $f(2) = e^2 - 6 > 0$. קיים שורש בקטע.</p>
+                    
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>איטרציה $n$</th>
+                                <th>קטע $[a_n, b_n]$</th>
+                                <th>אמצע הקטע $c_n$</th>
+                                <th>ערך הפונקציה $f(c_n)$</th>
+                                <th>שגיאה (חצי קטע) $\frac{b-a}{2}$</th>
+                                <th>סטטוס</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>$[1, 2]$</td>
+                                <td>$1.5$</td>
+                                <td>$f(1.5) < 0$</td>
+                                <td>$\frac{2-1}{2} = 0.5$</td>
+                                <td>$> 0.1 \implies$ ממשיכים</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>$[1.5, 2]$</td>
+                                <td>$1.75$</td>
+                                <td>$f(1.75) > 0$</td>
+                                <td>$\frac{2-1.5}{2} = 0.25$</td>
+                                <td>$> 0.1 \implies$ ממשיכים</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>$[1.5, 1.75]$</td>
+                                <td>$1.625$</td>
+                                <td>$f(1.625) > 0$</td>
+                                <td>$\frac{1.75-1.5}{2} = 0.125$</td>
+                                <td>$> 0.1 \implies$ ממשיכים</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>$[1.5, 1.625]$</td>
+                                <td>$1.5625$</td>
+                                <td>-</td>
+                                <td>$\frac{1.625-1.5}{2} = 0.0625$</td>
+                                <td>$< 0.1 \implies$ <strong>עוצרים!</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="highlight-box">
+                        <strong>תשובה סופית:</strong> הקירוב המבוקש לשורש הוא $\frac{1.625 + 1.5}{2} = \mathbf{1.5625}$.
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. חישוב מראש של מספר האיטרציות והערכת השיטה</h2>
+                    <span class="objective-tag">יעד: ניתוח יתרונות וחסרונות שיטת החצייה</span>
+                </div>
+                <div class="theory-section">
+                    <p>עבור התרגיל הקודם ($[1,2]$ עם $\delta = 0.1$), נחשב מראש כמה איטרציות נדרשות:</p>
+                    $$n > \log_2\left(\frac{2-1}{0.1}\right) - 1 = \log_2(10) - 1 \approx 3.3219 - 1 = 2.3219 \implies \mathbf{n = 3}$$
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercise" onclick="togglePanel('ex4_pros_cons')">הצג יתרונות וחסרונות של שיטת החצייה</button>
+                </div>
+                <div id="ex4_pros_cons" class="panel panel-exercise">
+                    <h4>יתרונות השיטה:</h4>
+                    <ul>
+                        <li>מבטיחה התכנסות תמיד (במידה והפונקציה רציפה ומשנה סימן).</li>
+                        <li>ניתן למצוא מראש את מספר האיטרציות המדויק הנדרש להגעה לכל רמת דיוק.</li>
+                    </ul>
+                    <br>
+                    <h4>חסרונות השיטה:</h4>
+                    <ul>
+                        <li>התכנסות איטית (סדר ליניארי $r=1$).</li>
+                        <li>מחייבת למצוא קטע התחלתי שבו הפונקציה מחליפה סימן.</li>
+                        <li>איננה עובדת עבור פונקציות שלא חוצות את הציר (כמו נקודות השקה).</li>
+                        <li>    שימושית רק לפונקציות רציפות</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. שיטת המיקום השגוי (Regula Falsi)</h2>
+                    <span class="objective-tag">יעד: פיתוח גיאומטרי של נוסחת המיתר</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטה זו מחליפה את נקודת האמצע הגיאומטרית בנקודת החיתוך של <strong>המיתר</strong> המחבר בין הנקודות $(a, f(a))$ ל-$(b, f(b))$ עם ציר ה-$x$.</p>
+                    <div class="formula-box">
+                        <strong>משוואת המיתר ובידוד $x$:</strong><br>
+                        $$y - f(a) = \frac{f(b) - f(a)}{b - a}(x - a)$$
+                        הצבת $y=0$ מביאה לנוסחת המיקום השגוי:
+                        $$\boxed{x = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)}}$$
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5_example')">הצג תרגיל הדגמה מלא בשיטת Regula Falsi</button>
+                </div>
+                <div id="ex5_example" class="panel panel-example">
+                    <h4>תרגיל: $f(x) = x^3 - x - 2 = 0$ בקטע $[1,2]$ עד $|f(c)| < 0.05$</h4>
+                    <ul>
+                        <li><strong>איטרציה 1:</strong> $a_0=1, b_0=2 \implies c_0 = \frac{1(4) - 2(-2)}{4 - (-2)} = \frac{8}{6} \approx 1.3333$. <br>$f(c_0) = -0.9630 \implies |f| > 0.05$, מחליפים את $a$.</li>
+                        <li><strong>איטרציה 2:</strong> $a_1=1.3333, b_1=2 \implies c_1 = \frac{1.3333(4) - 2(-0.9630)}{4 - (-0.9630)} \approx 1.4627$. <br>$f(c_1) = -0.3346 \implies |f| > 0.05$, מחליפים את $a$.</li>
+                        <li><strong>איטרציה 3:</strong> $a_2=1.4627, b_2=2 \implies c_2 = \frac{1.4627(4) - 2(-0.3346)}{4 - (-0.3346)} \approx 1.5042$. <br>$f(c_2) = -0.1008 \implies |f| > 0.05$, מחליפים את $a$.</li>
+                        <li><strong>איטרציה 4:</strong> $a_3=1.5042, b_3=2 \implies c_3 = \frac{1.5042(4) - 2(-0.1008)}{4 - (-0.1008)} \approx 1.5164$. <br>$f(c_3) = -0.0296 \implies |-0.0296| < 0.05 \implies$ <strong>עוצרים!</strong></li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>תוצאה סופית:</strong> $\alpha \approx 1.5164$.
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="subtopic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. ניתוח תנאי עצירה וסכנת הלולאה האינסופית</h2>
+                    <span class="objective-tag">יעד: הבחנה קריטית בין תנאי העצירה ב-Regula Falsi</span>
+                </div>
+                <div class="theory-section">
+                    <p>בשיטת המיקום השגוי עלול להתרחש מצב שבו <strong>קצה אחד נשאר תקוע</strong> במקומו לכל אורך התהליך.</p>
+                    <div class="highlight-box">
+                        <strong>אזהרה חמורה:</strong> מכיוון שקצה אחד תקוע ($b_n = b$), אורך הקטע $|b_n - a_n|$ <strong>אינו שואף לאפס</strong> ($|b_n - a_n| \not\to 0$)!
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercise" onclick="togglePanel('ex6_stop_cond')">הצג ניתוח השוואתי של תנאי העצירה</button>
+                </div>
+                <div id="ex6_stop_cond" class="panel panel-exercise">
+                    <h4>השוואה בין שני תנאי העצירה:</h4>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>תנאי עצירה</th>
+                                <th>נוסחה</th>
+                                <th>התנהגות בשיטת החצייה</th>
+                                <th>התנהגות בשיטת המיקום השגוי</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>אורך הקטע</strong></td>
+                                <td>$|b_n - a_n| < \delta$</td>
+                                <td>עובד מצוין ($|b_n - a_n| \to 0$)</td>
+                                <td><span style="color: red; font-weight: bold;">סכנת לולאה אינסופית!</span> קצה תקוע מונע מהקטע להתכווץ לאפס.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ערך הפונקציה</strong></td>
+                                <td>$|f(c_n)| < \varepsilon$</td>
+                                <td>עובד היטב</td>
+                                <td><strong>חובה לשימוש!</strong> מבטיח עצירה כשהקירוב קרוב מספיק לשורש.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>פתרון בפרקטיקה:</strong> משלבים את שני התנאים יחד עם תנאי בטיחות של מספר איטרציות מקסימלי ($N_{max}$).</p>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

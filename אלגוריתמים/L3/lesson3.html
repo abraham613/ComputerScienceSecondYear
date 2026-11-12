@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אלגוריתמים 1 - שיעור 5: ערך המיקום (Order Statistics) ואלגוריתמי בחירה</title>
+    <!-- MathJax לתצוגה מתמטית נקייה ומקצועית -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --panel-q-bg: #fff8f0;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --panel-q-bg: #2d241e;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercises {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .btn-sol-item {
+            background-color: var(--success-color);
+            color: white;
+            margin-top: 6px;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercises {
+            background-color: rgba(142, 68, 173, 0.08);
+            border-color: #8e44ad;
+        }
+
+        .panel-solution {
+            background-color: var(--sol-bg);
+            border-color: var(--success-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .sub-question-card {
+            background-color: var(--item-bg);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid #8e44ad;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+
+        .sub-question-title {
+            font-weight: 600;
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .code-block {
+            direction: ltr;
+            text-align: left;
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>אלגוריתמים 1 - שיעור 5</h1>
+        <h2>ערך המיקום (Order Statistics), בחירה אקראית ואלגוריתם חציון החציונים</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. הגדרת ערך המיקום ובעיית הבחירה</a></li>
+                <li><a href="#topic-2">2. פתרון נאיבי ומקרים פרטיים</a></li>
+                <li><a href="#topic-3">3. אלגוריתם בחירה אקראית</a></li>
+                <li><a href="#topic-4">4. ניתוח זמנים: Randomized-Select</a></li>
+                <li><a href="#topic-5">5. אלגוריתם דטרמיניסטי (חציון החציונים)</a></li>
+                <li><a href="#topic-6">6. הוכחת ליניאריות במקרה הגרוע</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. הגדרת ערך המיקום (Order Statistic) ובעיית הבחירה</h2>
+                    <span class="objective-tag">הגדרות יסוד</span>
+                </div>
+                <div class="theory-section">
+                    <p>בהינתן קבוצה בת \(n\) איברים, <strong>ערך המיקום ה-\(i\)</strong> (באנגלית: \(i\)-th Order Statistic) הוא <strong>האיבר ה-\(i\) הקטן ביותר</strong> בקבוצה.</p>
+                    <ul>
+                        <li><strong>מינימום (\(i = 1\)):</strong> האיבר הקטן ביותר בקבוצה.</li>
+                        <li><strong>מקסימום (\(i = n\)):</strong> האיבר הגדול ביותר בקבוצה.</li>
+                        <li><strong>חציון / Median (\(i = \frac{n+1}{2}\)):</strong> האיבר האמצעי (כאשר \(n\) זוגי מבחינים בין חציון תחתון \(\lfloor \frac{n+1}{2} \rfloor\) לחציון עליון \(\lceil \frac{n+1}{2} \rceil\)).</li>
+                    </ul>
+                    <p><strong>הגדרה פורמלית של בעיית הבחירה (Selection Problem):</strong></p>
+                    <ul>
+                        <li><strong>קלט:</strong> קבוצה \(A\) של \(n\) מספרים (לנוחות נניח שהם שונים זה מזה), ומספר שלם \(i\) המקיים \(1 \le i \le n\).</li>
+                        <li><strong>פלט:</strong> האיבר \(x \in A\) הגדול בדיוק מ-\(i-1\) איברים אחרים ב-\(A\).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. פתרון נאיבי ומקרים פרטיים בזמן ליניארי</h2>
+                    <span class="objective-tag">מוטיבציה לשיפור</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>פתרון אפשרי על ידי מיון:</strong> ניתן למיין את כל איברי המערך באמצעות אלגוריתם מיון יעיל (כגון MergeSort) בזמן \(\mathcal{O}(n \log n)\), ולאחר מכן להחזיר את האיבר במקום ה-\(i\).</p>
+                    <p>החיסרון: מיון מלא פותר את הבעיה עבור <em>כל</em> \(i\) בו-זמנית — עבודה מיותרת כשאנו מעוניינים באיבר ספציפי אחד בלבד.</p>
+                    <p><strong>מציאת מינימום ומקסימום בזמן ליניארי \(\Theta(n)\):</strong></p>
+                    <div class="code-block">minimum(A)
+    n = length(A)
+    min = A[1]
+    for i = 1 to n
+        if min &gt; A[i]
+            min = A[i]
+    return min</div>
+                    <p>המטרה שלנו בשיעור היא להכליל רעיון זה ולמצוא <strong>כל</strong> ערך מיקום \(i\) בזמן ליניארי \(\Theta(n)\).</p>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. אלגוריתם בחירה אקראית (Randomized-Select)</h2>
+                    <span class="objective-tag">הפרד ומשול אקראי</span>
+                </div>
+                <div class="theory-section">
+                    <p>האלגוריתם מתבסס על עקרון החלוקה של מיון מהיר (QuickSort):</p>
+                    <ol>
+                        <li>בוחרים איבר ציר (<strong>pivot</strong>) באקראי ומסדרים סביבו את המערך: הקטנים משמאל והגדולים מימין (<code>randomized-partition</code>).</li>
+                        <li>בניגוד ל-QuickSort שבו מפעילים רקורסיה על שני חלקי המערך, כאן מזהים באיזה צד נמצא האיבר ה-\(i\) וממשיכים רקורסיבית <strong>רק בחלק הרלוונטי</strong>.</li>
+                    </ol>
+                    <div class="code-block">randomized-select(A, p, r, i)
+    if p == r
+        return A[p]
+    q = randomized-partition(A, p, r)
+    k = q - p + 1    // מיקום הציר בתוך תת-המערך הנוכחי
+    if i == k
+        return A[q]
+    else if i &lt; k
+        return randomized-select(A, p, q - 1, i)
+    else
+        return randomized-select(A, q + 1, r, i - k)</div>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_rand_trace')">הצג דוגמת הרצה מהשיעור</button>
+                    <button class="btn btn-exercises" onclick="togglePanel('rand_ex_container')">הצג תרגילים וסעיפים</button>
+                </div>
+
+                <div id="ex_rand_trace" class="panel panel-example">
+                    <h4>מעקב הרצה: מציאת האיבר ה-4 בגודלו במערך \([7, 3, 2, 1, 5, 9, 8]\)</h4>
+                    <ol>
+                        <li><strong>התחלה (\(n=7, i=4\)):</strong> נבחר באקראי \(\text{pivot} = 3\). לאחר חלוקה מתקבל \([1, 2, \mathbf{3}, 7, 5, 9, 8]\). הציר 3 נמצא במקום ה-\(k=3\). מכיוון ש-\(i=4 &gt; 3\), פונים ימינה ומחפשים את האיבר ה-\(4 - 3 = 1\) (או לפי גרסת המרצה הכוללת את הציר: האיבר ה-2 בתת-המערך \([3, 7, 5, 9, 8]\)).</li>
+                        <li><strong>שלב שני:</strong> נבחר באקראי \(\text{pivot} = 7\). לאחר סידור מחדש והמשך צמצום הטווח, נבחר \(\text{pivot} = 5\).</li>
+                        <li><strong>בסיס הרקורסיה:</strong> מגיעים לתת-מערך בגודל 1 המכיל רק את האיבר <strong>\(5\)</strong>, וזהו הפתרון המוחזר.</li>
+                    </ol>
+                </div>
+
+                <div id="rand_ex_container" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">תרגילים בנושא בחירה אקראית:</h3>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. מדוע בפנייה לחלק הימני מעדכנים את האינדקס המבוקש ל-\(i - k\)?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_rand_a')">הצג פתרון</button>
+                        <div id="sol_rand_a" class="panel panel-solution">
+                            <p>מכיוון שבתת-המערך הנוכחי יש \(k\) איברים הקטנים או שווים לאיבר הציר בצד שמאל, כאשר אנו משליכים את כל החלק השמאלי, האיבר שהיה במקום ה-\(i\) מתוך כלל המערך הנוכחי הופך כעת לאיבר במקום ה-\(i - k\) בתוך תת-המערך הימני החדש.</p>
+                        </div>
+                    </div>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. מה תפקיד הפקודה <code>swap(A[k], A[r])</code> בתחילת הפונקציה <code>randomized-partition</code>?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_rand_b')">הצג פתרון</button>
+                        <div id="sol_rand_b" class="panel panel-solution">
+                            <p>היא מעבירה את איבר הציר שנבחר באקראי לסוף תת-המערך (אינדקס \(r\)), כדי שנוכל להריץ את לולאת החלוקה הרגילה של QuickSort (אשר מניחה שאיבר הציר נמצא בסוף הטווח) ללא צורך בשינוי קוד הלולאה.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. ניתוח זמנים: Randomized-Select</h2>
+                    <span class="objective-tag">מקרה טוב, גרוע וממוצע</span>
+                </div>
+                <div class="theory-section">
+                    <p>זמן הריצה של האלגוריתם האקראי תלוי באיכות החלוקה שמייצר איבר הציר בכל שלב:</p>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>תרחיש</th>
+                                <th>תיאור החלוקה</th>
+                                <th>נוסחת נסיגה \(T(n)\)</th>
+                                <th>סיבוכיות סופית</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>מקרה טוב (Best Case)</strong></td>
+                                <td>הציר הוא תמיד החציון (חלוקה לשניים בגודל \(\frac{n}{2}\))</td>
+                                <td>\(T(n) = T(n/2) + cn\)</td>
+                                <td>\(\Theta(n)\)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>מקרה גרוע (Worst Case)</strong></td>
+                                <td>הציר הוא תמיד המקסימום או המינימום (חלוקה ל-\(1\) ו-\(n-1\))</td>
+                                <td>\(T(n) = T(n-1) + cn\)</td>
+                                <td>\(\Theta(n^2)\)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>מקרה ממוצע (Average Case)</strong></td>
+                                <td>מיצוע על פני כל בחירות הציר האקראיות האפשריות</td>
+                                <td>ניתוח הסתברותי (תוחלת)</td>
+                                <td>\(\mathcal{O}(n)\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('time_rand_ex')">הצג תרגילים וסעיפים</button>
+                </div>
+
+                <div id="time_rand_ex" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">תרגילים בניתוח זמנים:</h3>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. פתח את נוסחת הנסיגה של המקרה הטוב \(T(n) = T(n/2) + cn\) והוכח שהיא שווה ל-\(\Theta(n)\).</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_tr_a')">הצג פתרון</button>
+                        <div id="sol_tr_a" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ T(n) = T\left(\frac{n}{2}\right) + cn = T\left(\frac{n}{4}\right) + c\left(\frac{n}{2} + n\right) = \dots = c\left(1 + \dots + \frac{n}{4} + \frac{n}{2} + n\right) \]
+                            </div>
+                            <p>זהו טור הנדסי יורד שסכומו חסום מלמעלה על ידי \(2cn\), ולכן \(T(n) = \Theta(n)\).</p>
+                        </div>
+                    </div>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. פתח את נוסחת הנסיגה של המקרה הגרוע \(T(n) = T(n-1) + cn\) והוכח שהיא שווה ל-\(\Theta(n^2)\).</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_tr_b')">הצג פתרון</button>
+                        <div id="sol_tr_b" class="panel panel-solution">
+                            <div class="math-block">
+                                \[ T(n) = T(n-1) + cn = T(n-2) + c(n + (n-1)) = \dots = c(1 + 2 + \dots + n) = c \cdot \frac{n(n+1)}{2} \]
+                            </div>
+                            <p>מכיוון שהחזקה הדומיננטית היא \(n^2\), זמן הריצה במקרה הגרוע הוא \(\Theta(n^2)\).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. אלגוריתם דטרמיניסטי: חציון החציונים (Select)</h2>
+                    <span class="objective-tag">בחירה חכמה ומאוזנת</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי להבטיח זמן ריצה ליניארי \(\mathcal{O}(n)\) <strong>גם במקרה הגרוע ביותר</strong>, עלינו לבחור איבר ציר בצורה חכמה ודטרמיניסטית שתבטיח חלוקה מאוזנת בכל שלב.</p>
+                    <p><strong>שלבי האלגוריתם <code>select(A, p, r, i)</code>:</strong></p>
+                    <ol>
+                        <li><strong>חלוקה לחמישיות:</strong> מחלקים את מערך הקלט \(A\) לקבוצות בנות 5 איברים כל אחת (סה"כ \(\lceil n/5 \rceil\) קבוצות).</li>
+                        <li><strong>מציאת חציונים מקומיים:</strong> ממיינים כל חמישייה ומוצאים את החציון שלה. אוספים את כל החציונים למערך עזר \(B\) (בגודל \(\lceil n/5 \rceil\)).</li>
+                        <li><strong>מציאת חציון החציונים:</strong> מפעילים את הפונקציה <code>select</code> באופן רקורסיבי על המערך \(B\) כדי למצוא את החציון שלו — איבר זה יוגדר בתור ה-<code>pivot</code>.</li>
+                        <li><strong>חלוקת המערך:</strong> מבצעים <code>q = partition(A, p, r, pivot)</code> סביב איבר הציר שנמצא.</li>
+                        <li><strong>רקורסיה על החלק המתאים:</strong> בודקים היכן נמצא האיבר ה-\(i\) ביחס לאינדקס \(q\) וממשיכים רקורסיבית רק בחלק השמאלי או הימני.</li>
+                    </ol>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_det_visual')">הצג הסבר הדוגמה הוויזואלית (\(n=100\))</button>
+                </div>
+
+                <div id="ex_det_visual" class="panel panel-example">
+                    <h4>המחשה עבור 100 מספרים (20 עמודות של 5 איברים):</h4>
+                    <ul>
+                        <li>מסדרים כל עמודה בת 5 מספרים מהקטן לגדול (מלמעלה למטה), ומסדרים את העמודות משמאל לימין לפי גודל החציונים בשורה האמצעית.</li>
+                        <li>איבר הציר שנבחר הוא חציון השורה האמצעית (בדוגמה שבמצגת: המספר <strong>47</strong>).</li>
+                        <li><strong>איברים קטנים מהציר:</strong> כל החציונים משמאל ל-47 קטנים ממנו, וכל האיברים שמעליהם בעמודותיהם קטנים מהם — לכן מובטחת קבוצה גדולה של איברים שקטנים או שווים ל-47.</li>
+                        <li><strong>איברים גדולים מהציר:</strong> באופן סימטרי, כל החציונים מימין ל-47 וכל האיברים שמתחתיהם בעמודותיהם גדולים או שווים ל-47.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="topic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. ניתוח גודל הקבוצות והוכחת ליניאריות במקרה הגרוע</h2>
+                    <span class="objective-tag">הוכחה מתמטית</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>חישוב גודל הקבוצות שנוצרות לאחר החלוקה:</strong></p>
+                    <ul>
+                        <li>ישנן \(\lceil n/5 \rceil\) קבוצות של 5, ולכן ישנם \(\lceil n/5 \rceil\) חציונים.</li>
+                        <li>מכיוון ש-<code>pivot</code> הוא חציון החציונים, לפחות מחצית מהחציונים גדולים או שווים לו: \(\lceil \frac{1}{2} \lceil n/5 \rceil \rceil\).</li>
+                        <li>בכל קבוצה כזו (למעט לכל היותר 2 קבוצות קצה: הקבוצה של הציר עצמו, וקבוצה אחרונה שאולי אינה מלאה ב-5 איברים) יש לפחות <strong>3 איברים</strong> שגדולים מ-<code>pivot</code>.</li>
+                    </ul>
+                    <div class="math-block">
+                        \[ \text{מספר האיברים הגדולים מ-pivot לפחות:} \quad \left(\left\lceil \frac{1}{2} \left\lceil \frac{n}{5} \right\rceil \right\rceil - 2\right) \cdot 3 \ge 3\left(\frac{n}{10} - 2\right) = \frac{3}{10}n - 6 \]
+                    </div>
+                    <p>מכאן נובע שמספר האיברים הקטנים מ-<code>pivot</code> (החלק שיישאר לרקורסיה במקרה הגרוע) הוא לכל היותר:</p>
+                    <div class="math-block">
+                        \[ n - \left(\frac{3}{10}n - 6\right) = \frac{7}{10}n + 6 \]
+                    </div>
+                    <p>באופן סימטרי לחלוטין, גם מספר האיברים הגדולים מ-<code>pivot</code> הוא לכל היותר \(\frac{7}{10}n + 6\). כלומר, בכל שלב אנו משליכים לפחות 30% מהקלט!</p>
+
+                    <p><strong>בניית משוואת הנסיגה הכוללת:</strong></p>
+                    <ul>
+                        <li>שלבים 1, 2 ו-4 (חלוקה לחמישיות, מיון כל חמישייה בזמן קבוע \(\mathcal{O}(1)\), וביצוע <code>partition</code>): סה"כ \(\mathcal{O}(n)\).</li>
+                        <li>שלב 3 (קריאה רקורסיבית למציאת חציון החציונים במערך \(B\)): \(T(\lceil n/5 \rceil)\).</li>
+                        <li>שלב 5 (קריאה רקורסיבית על החלק המתאים): לכל היותר \(T(7n/10 + 6)\).</li>
+                    </ul>
+                    <div class="math-block">
+                        \[ T(n) \le T\left(\frac{n}{5}\right) + T\left(\frac{7}{10}n + 6\right) + \mathcal{O}(n) \implies T(n) = \mathcal{O}(n) \]
+                    </div>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('det_proof_ex')">הצג תרגילים וסעיפים</button>
+                </div>
+
+                <div id="det_proof_ex" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">תרגילים בנושא אלגוריתם חציון החציונים:</h3>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. מדוע סכום הגדלים של שתי הקריאות הרקורסיביות במשוואה מבטיח זמן ריצה ליניארי \(\mathcal{O}(n)\)?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_dp_a')">הצג פתרון</button>
+                        <div id="sol_dp_a" class="panel panel-solution">
+                            <p>סכום הגדלים של תתי-הבעיות הרקורסיביות הוא \(\frac{1}{5}n + \frac{7}{10}n = \frac{9}{10}n = 0.9n\). מכיוון ש-\(0.9n &lt; n\) (העבודה יורדת גאומטרית בכל רמה בעץ הרקורסיה), מתקבל טור הנדסי מתכנס שסכומו פרופורציונלי לעבודה בשורש העץ, ולכן הפתרון הוא \(\mathcal{O}(n)\).</p>
+                        </div>
+                    </div>
+
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. מה יקרה אם נחלק את המערך לשלשות (קבוצות בגודל 3) במקום לחמישיות? האם האלגוריתם יישאר ליניארי?</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('sol_dp_b')">הצג פתרון</button>
+                        <div id="sol_dp_b" class="panel panel-solution">
+                            <p><strong>לא!</strong> אם נחלק לקבוצות של 3, מציאת חציון החציונים תיקח \(T(n/3)\). בכל קבוצה שחציונה קטן מהציר יש רק 2 איברים קטנים מהציר, ולכן לפחות \(\frac{1}{2} \cdot \frac{n}{3} \cdot 2 = \frac{n}{3}\) איברים קטנים ממנו, מה שמשאיר עד \(\frac{2}{3}n\) איברים להמשך הרקורסיה.</p>
+                            <div class="math-block">
+                                \[ T(n) \le T\left(\frac{n}{3}\right) + T\left(\frac{2}{3}n\right) + \mathcal{O}(n) \]
+                            </div>
+                            <p>כאן \(\frac{1}{3}n + \frac{2}{3}n = n\) (העבודה נשארת קבועה בכל רמה), ולכן נקבל \(\mathcal{O}(n \log n)\) ולא זמן ליניארי.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה במצב לילה (Dark Mode)
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

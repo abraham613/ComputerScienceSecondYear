@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוגיקה למדעי המחשב - סיכום שיעור: גרירה סמנטית, טאוטולוגיות וקבוצות קשרים שלימות</title>
+    <!-- MathJax CDN script for rendering mathematical expressions -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercises {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercises {
+            background-color: rgba(142, 68, 173, 0.08);
+            border-color: #8e44ad;
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .highlight-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-right: 3px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .sub-question-card {
+            background-color: var(--item-bg);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid #8e44ad;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sub-question-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 10px 0;
+            font-size: 1.05rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 10px 14px;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .step-explanation {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        
+        .strike-red {
+            color: #e74c3c;
+            text-decoration: line-through;
+            font-weight: bold;
+        }
+
+        .note-red {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>לוגיקה למדעי המחשב - סיכום מקיף</h1>
+        <h2>גרירה סמנטית, תכונות גרירה, טאוטולוגיות וקבוצות קשרים שלימות</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. הוכחה והפרכה של גרירה סמנטית ושקילות</a></li>
+                <li><a href="#topic-2">2. מונוטוניות של גרירה סמנטית והוכחתה</a></li>
+                <li><a href="#topic-3">3. מקרי קצה: סתירות וטאוטולוגיות בגרירה</a></li>
+                <li><a href="#topic-4">4. השמטת טאוטולוגיה מקבוצת הנחות</a></li>
+                <li><a href="#topic-5">5. השמטת טאוטולוגיה מתוך קבוצת הנחות (דוגמה והערות)</a></li>
+                <li><a href="#topic-6">6. קבוצת פסוקים וקשרים שלימה</a></li>
+                <li><a href="#topic-7">7. הוכחות שלימות ואי-שלימות של קשרים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. הוכחה והפרכה של גרירה סמנטית ושקילות לוגית</h2>
+                    <span class="objective-tag">יסודות הסמנטיקה</span>
+                </div>
+                <div class="theory-section">
+                    <p>בלוגיקה פסוקית, אנו מבחינים בין הוכחת טענת גרירה כללית לבין הפרכתה בעזרת מודול נגדי.</p>
+                    
+                    <div class="highlight-box">
+                        <strong>איך מוכיחים גרירה סמנטית ($U \models A$)?</strong><br>
+                        מציגים את **כל המודולים** (השמות האמת) בהם כל הפסוקים בקבוצה $U$ הם אמת ($\bar{V}(U) = T$), ומראים שבכל אחד ואחד ממודולים אלו, המודול מספק גם את הנגרר $A$ ($\bar{V}(A) = T$).
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>איך מפריכים גרירה סמנטית ($U \not\models A$)?</strong><br>
+                        מספיק למצוא **דוגמה נגדית אחת** (מודול ספציפי אחד $\bar{V}$) שבו כל הפסוקים ב-$U$ מקבלים ערך אמת ($T$), אך הנגרר $A$ מקבל ערך שקר ($F$).
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>שקילות לוגית ($A \equiv B$):</strong><br>
+                        שני פסוקים $A$ ו-$B$ הם שקולים לוגית אם ורק אם מתקיימת גרירה סמנטית דו-כיוונית:
+                        $$\{A\} \models B \quad \text{and} \quad \{B\} \models A$$
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמה והסבר מורחב</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>הסבר מורחב על הגדרת הגרירה:</h4>
+                    <p>משמעות הסימון $U \models A$ היא שאין שום מודול שבו כל ההנחות ב-$U$ מתקיימות אך המסקנה $A$ מופרת. שקילות לוגית $A \equiv B$ אומרת שלפסוקים $A$ ו-$B$ יש בדיוק אותו לוח אמת בכל מודול אפשרי.</p>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. משפט המונוטוניות של גרירה סמנטית</h2>
+                    <span class="objective-tag">משפט והוכחה</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>טענה (מונוטוניות):</strong> אם $U \models A$, אז לכל פסוק $B$ מתקיים:
+                        $$U \cup \{B\} \models A$$
+                    </div>
+                    <p><strong>משמעות אינטואיטיבית:</strong> הוספת הנחה חדשה ($B$) לקבוצת הנחות קיימת לא יכולה לבטל מסקנה ($A$) שכבר נגזרה מההנחות המקוריות.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('proof_monotonicity')">הצג הוכחה מלאה (חלוקה למקרים)</button>
+                </div>
+
+                <div id="proof_monotonicity" class="panel panel-exercises">
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">הוכחת משפט המונוטוניות</div>
+                        <div class="step-explanation">
+                            <p><strong>נתון:</strong> $U \models A$, כלומר לכל מודול $\bar{V}$, אם $\bar{V}(U) = T$ אז $\bar{V}(A) = T$.</p>
+                            <p><strong>צ"ל:</strong> $U \cup \{B\} \models A$.</p>
+                            <p>יהי מודול $\bar{V}$ כלשהו. נבחן את שני המקרים האפשריים עבור ערך האמת של $B$ במודול זה:</p>
+                            <ul>
+                                <li><strong>מקרה א' ($\bar{V}(B) = F$):</strong> במקרה זה המודול אינו מספק את הקבוצה המורחבת (כי $\bar{V}(U \cup \{B\}) = F$). לכן מודול זה אינו מהווה דוגמה נגדית לגרירה.</li>
+                                <li><strong>מקרה ב' ($\bar{V}(B) = T$):</strong> אם ניקח מודול שמספק את $U \cup \{B\}$, הרי שהוא בפרט מספק את $U$ ($\bar{V}(U) = T$). מהנתון $U \models A$ נובע מיד ש-$\bar{V}(A) = T$.</li>
+                            </ul>
+                            <p><strong>מסקנה:</strong> בכל מודול שמספק את $U \cup \{B\}$, המתחייב הוא $\bar{V}(A) = T$, ולכן $U \cup \{B\} \models A$ (מ.ש.ל).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. מקרי קצה בגרירה: סתירות וטאוטולוגיות</h2>
+                    <span class="objective-tag">כללי אצבע סמנטיים</span>
+                </div>
+                <div class="theory-section">
+                    <p>בשיעור בוחנים שני מקרי קצה מיוחדים המפשטים קביעות לגבי גרירה סמנטית:</p>
+
+                    <div class="highlight-box">
+                        <strong>1. סתירה בצד ההנחה:</strong><br>
+                        יהי $B$ פסוק סתירה (פסוק שאינו מקבל אמת באף מודול). אזי **לכל פסוק $A$** מתקיים:
+                        $$B \models A$$
+                        <em>הסבר:</em> מכיוון שאין אף מודול שבו $B$ אמת, התנאי מתקיים באופן ריק (אין דוגמה נגדית).
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>2. טאוטולוגיה בצד המסקנה:</strong><br>
+                        יהי $B$ פסוק טאוטולוגיה (פסוק שהוא אמת בכל מודול, מסומן $\models B$). אזי **לכל פסוק $A$** מתקיים:
+                        $$A \models B$$
+                        <em>הסבר:</em> מכיוון ש-$B$ תמיד מקבל ערך אמת, לכל מודול שמספק את $A$, הנגרר $B$ בהכרח אמת.
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. השמטת טאוטולוגיה מקבוצת הנחות</h2>
+                    <span class="objective-tag">משפט והוכחה בשלילה</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>משפט:</strong> אם $U \models A$ וקיים פסוק $B \in U$ כך ש-$B$ הוא טאוטולוגיה ($\models B$), אזי:
+                        $$U \setminus \{B\} \models A$$
+                    </div>
+                    <p><strong>משמעות:</strong> הנחה שהיא טאוטולוגיה אינה מוסיפה מידע חדש, ולכן מותר להשמיט אותה משרשרת ההנחות מבלי לפגוע בתקפות הגרירה.</p>
+
+                    <!-- ההוכחה הכללית בשלילה מעודכנת עם מעטפות MathJax תקינות -->
+                    <div class="sub-question-card" style="margin-top: 15px;">
+                        <div class="sub-question-title">הוכחה כללית בדרך השלילה</div>
+                        <div class="step-explanation">
+                            <p><strong>הנחת השלילה:</strong> נניח ש-$U \setminus \{B\} \not\models A$.</p>
+                            <p>פירוש הדבר הוא שקיים מודול $\bar{V}$ המקיים:</p>
+                            <div class="math-block">
+                                $$\bar{V}(U \setminus \{B\}) = T \quad \text{and} \quad \bar{V}(A) = F$$
+                            </div>
+                            <p>מכיוון שנתון $U \models A$ ובמודול זה $\bar{V}(A) = F$, חובה שיתקיים $\bar{V}(U) = F$.</p>
+                            <p>הכוונה היא שהסיבה היחידה לכך ש-$\bar{V}(U) = F$ בעוד $\bar{V}(U \setminus \{B\}) = T$ היא שמתקיים:</p>
+                            <div class="math-block">
+                                $$\bar{V}(B) = F$$
+                            </div>
+                            <p><strong>הסתירה:</strong> מצאנו מודול שבו $\bar{V}(B) = F$, וזו סתירה ישירה לנתון ש-$B$ הוא טאוטולוגיה ($\models B$), הדורש ש-$B$ יהיה אמת בכל מודול.</p>
+                            <p>לפיכך, הנחת השלילה מוטעית ומתקיים $U \setminus \{B\} \models A$ (מ.ש.ל).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('proof_tautology_removal')">משפט והוכחה בשלילה (הצג דוגמה מפורטת מהלוח)</button>
+                </div>
+
+                <!-- הכפתור מציג את הדוגמה מהתמונה השנייה עם עיבוד MathJax מלא -->
+                <div id="proof_tautology_removal" class="panel panel-exercises">
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">דוגמה קונקרטית לבדיקת גרירה והשמטת טאוטולוגיה</div>
+                        <div class="step-explanation">
+                            <p><strong>נתון:</strong> $A = p \to q$, &nbsp; $U = \{\neg p, q\}$, &nbsp; $B = p \lor q$.</p>
+                            <p>נבדוק האם $U \cup \{B\} \models A$ והאם הוספת/השמטת $B$ משפיעה:</p>
+
+                            <div class="math-block">
+                                $$\text{נתון: } \bar{V}(U) = T \implies \bar{V}(\neg p) = T \text{ and } \bar{V}(q) = T$$
+                                $$\Downarrow$$
+                                $$\bar{V}(p) = F, \quad \bar{V}(q) = T \implies \bar{V}(p \to q) = T$$
+                            </div>
+
+                            <p>נעריך כעת את הקבוצה המורחבת $U \cup \{B\} = \{\neg p, q, p \lor q\}$:</p>
+                            <div class="math-block">
+                                $$\bar{V}(U \cup \{B\}) = T \implies \bar{V}(p) = F \;\land\; \bar{V}(q) = T \;\land\; \bar{V}(p \lor q) = T$$
+                            </div>
+
+                            <p>בחינת פירוק הדיסיונקציה $\bar{V}(p \lor q) = T$ נותנת $(\bar{V}(p) = T \text{ or } \bar{V}(q) = T)$.</p>
+                            <p class="note-red">הערת לוח / סתירה שגויה שנפסלה: <span class="strike-red">$(\bar{V}(p) = T \text{ or } \bar{V}(q) = T)$</span> &mdash; סתירה לקביעה הקודמת ש-$p=F$, אך כיוון ש-$q=T$ הדיסיונקציה מתקיימת!</p>
+
+                            <div class="math-block">
+                                $$\Downarrow$$
+                                $$\bar{V}(p \to q) = T$$
+                                $$\Downarrow$$
+                                $$U \cup \{B\} \models A$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. השמטת טאוטולוגיה מתוך קבוצת הנחות (דוגמה והערות)</h2>
+                    <span class="objective-tag">הערות מרצה וכללי גרירה</span>
+                </div>
+                <div class="theory-section">
+                    <p>בחלק זה נבחן את כללי ההקשר בין סתירה, טאוטולוגיה וגרירה סמנטית כפי שנרשמו בלוח:</p>
+
+                    <div class="highlight-box">
+                        <strong>הערה ① — סתירה בצד ההנחה ($B \models A$):</strong><br>
+                        אם $B$ הוא פסוק סתירה, אזי לכל פסוק $A$ מתקיים $B \models A$.
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>הערה ② — טאוטולוגיה בצד המסקנה ($A \models B$):</strong><br>
+                        אם $B$ הוא פסוק טאוטולוגיה, אזי לכל פסוק $A$ מתקיים $A \models B$.
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_sat')">הצג ניתוח דוגמה מפורט</button>
+                </div>
+
+                <div id="ex_sat" class="panel panel-example">
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ניתוח הקבוצה $U = \{p \lor q, \, p \land r, \, q \land r\}$</div>
+                        <div class="step-explanation">
+                            <p>נדרוש מודול $\bar{V}$ שמספק את $U$ ($\bar{V}(U) = T$):</p>
+                            <div class="math-block">
+                                $$1) \bar{V}(p \lor q) = T \implies (\bar{V}(p)=T \text{ or } \bar{V}(q)=T)$$
+                                $$2) \bar{V}(p \land r) = T \implies (\bar{V}(p)=T \text{ and } \bar{V}(r)=T)$$
+                                $$3) \bar{V}(q \land r) = T \implies (\bar{V}(q)=T \text{ and } \bar{V}(r)=T)$$
+                            </div>
+                            <p>מהתנאים (2) ו-(3) נובע בהכרח המודול היחיד שמספק את $U$:</p>
+                            <div class="math-block">
+                                $$\bar{V}(p) = \bar{V}(q) = \bar{V}(r) = T$$
+                            </div>
+                            <p>אם נגדיר כעת פסוק חדש $B = \neg p$ ונוסיף אותו לקבוצה, נקבל קבוצה מורחבת $U \cup \{B\}$. מכיוון שבמודול היחיד שספק את $U$ מתקיים $p=T$, יתקבל $\bar{V}(B) = F$.</p>
+                            <p><strong>מסקנה:</strong> הקבוצה המורחבת $U \cup \{B\}$ **אינה בת-סיפוק** (אין אף מודול בעולם שמספק אותה).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="topic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. קבוצת פסוקים וקשרים שלימה</h2>
+                    <span class="objective-tag">הגדרות יסוד</span>
+                </div>
+                <div class="theory-section">
+                    <div class="highlight-box">
+                        <strong>הגדרת קבוצת פסוקים שלימה:</strong><br>
+                        קבוצת פסוקים $U'$ נקראת שלימה אם לכל פסוק $A$, קיים פסוק $B \in U'$ כך ש-$B \equiv A$.<br>
+                        <em>דוגמה:</em> אוסף כל נוסחאות ה-CNF או ה-DNF מהוות קבוצות פסוקים שלימות.
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>הגדרת קבוצת הפסוקים $A_I$:</strong><br>
+                        תהי $I$ קבוצת קשרים לוגיים. הקבוצה $A_I$ היא קבוצת כל הפסוקים שנבנים מתוך המשתנים הפסוקיים באמצעות הקשרים מ-$I$ בלבד.
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>הגדרת קבוצת קשרים שלימה:</strong><br>
+                        קבוצת קשרים $I$ נקראת שלימה אם קבוצת הפסוקים $A_I$ הנוצרת על ידה היא קבוצת פסוקים שלימה (כלומר, ניתן להביע כל פסוק בלוגיקה בעזרת הקשרים שב-$I$ בלבד).
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex_ai')">הצג דוגמת בדיקת שייכות ל-$A_{\{\neg, \to\}}$</button>
+                </div>
+
+                <div id="ex_ai" class="panel panel-example">
+                    <p>עבור $I = \{\neg, \to\}$, נבחן שייכות לקבוצה $A_I$:</p>
+                    <ul>
+                        <li>$\neg(p \to q) \in A_I$ — חוקי (מכיל רק $\neg$ ו-$\to$).</li>
+                        <li>$(p \to q) \lor r \notin A_I$ — לא חוקי (מכיל את הקשר $\lor$ שאינו ב-$I$).</li>
+                        <li>$\neg(\neg(\neg p)) \in A_I$ — חוקי.</li>
+                        <li>$p \in A_I$ — חוקי (משתנה פסוקי אטומי ללא קשרים זרים).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="topic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. הוכחות שלימות ואי-שלימות של קבוצות קשרים</h2>
+                    <span class="objective-tag">הוכחות אלגבריות ואינדוקציה</span>
+                </div>
+                <div class="theory-section">
+                    <p>להלן ההוכחות המרכזיות מהשיעור לבדיקת שלימות של אוספי קשרים:</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('proof_completeness_all')">הצג את כל הוכחות השלימות מהלוח</button>
+                </div>
+
+                <div id="proof_completeness_all" class="panel panel-exercises">
+
+                    <!-- הוכחה 1 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">הוכחה ①: הקבוצה $I = \{\neg, \land\}$ הינה קבוצת קשרים שלימה</div>
+                        <div class="step-explanation">
+                            <p>ידוע ש- $\{\neg, \land, \lor\}$ שלימה. מספיק להראות שניתן לבטא את הקשר $\lor$ באמצעות הקשרים $\neg$ ו-$\land$ בלבד:</p>
+                            <p>לכל $\alpha_1, \alpha_2 \in A_I$, לפי חוקי דה-מורגן וכפילות השלילה:</p>
+                            <div class="math-block">
+                                $$(\alpha_1 \lor \alpha_2) \equiv (\neg(\neg \alpha_1) \lor \neg(\neg \alpha_2)) \equiv \neg((\neg \alpha_1) \land (\neg \alpha_2))$$
+                            </div>
+                            <p>מכיוון שהביטוי מימין מכיל רק $\neg$ ו-$\land$, הקבוצה $\{\neg, \land\}$ שלימה (מ.ש.ל).</p>
+                        </div>
+                    </div>
+
+                    <!-- הוכחה 2 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">הוכחה ②: הקבוצה $I = \{\neg, \to\}$ הינה קבוצת קשרים שלימה</div>
+                        <div class="step-explanation">
+                            <p>נראה שניתן לבטא את הקשר $\lor$ בעזרת $\neg$ ו-$\to$:</p>
+                            <div class="math-block">
+                                $$(\alpha_1 \lor \alpha_2) \equiv (\neg(\neg \alpha_1) \lor \alpha_2) \equiv (\neg \alpha_1 \to \alpha_2)$$
+                            </div>
+                            <p>בנוסף, מראים שניתן לבטא את הקשר $\land$ בעזרת $\neg$ ו-$\to$:</p>
+                            <div class="math-block">
+                                $$(\alpha_1 \land \alpha_2) \equiv \neg(\neg \alpha_1 \lor \neg \alpha_2) \equiv \neg(\alpha_1 \to \neg \alpha_2)$$
+                            </div>
+                            <p>לפיכך, הקבוצה $\{\neg, \to\}$ מסוגלת לייצר את הקשרים השלמים ולכן הינה שלימה (מ.ש.ל).</p>
+                        </div>
+                    </div>
+
+                    <!-- הוכחה 3 -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">הוכחה ③: הקבוצה $I = \{\land, \lor, \to, \leftrightarrow\}$ אינה שלימה</div>
+                        <div class="step-explanation">
+                            <p><strong>טענת עזר (שימור אמת):</strong> יהי מודול $\bar{V}$ שבו כל המשתנים הפסוקיים מקבלים אמת ($\bar{V}(p) = T$ לכל אטום $p$). אזי לכל פסוק $B \in A_{\{\land, \lor, \to, \leftrightarrow\}}$, מתקיים $\bar{V}(B) = T$.</p>
+                            <p><strong>הוכחה באינדוקציה מבנית:</strong></p>
+                            <ul>
+                                <li><strong>בסיס:</strong> עבור אטום $p$, מוגדר $\bar{V}(p) = T$.</li>
+                                <li><strong>צעד:</strong> אם $\bar{V}(\alpha)=T$ ו-$\bar{V}(\beta)=T$, אזי:
+                                    <br>$\bar{V}(\alpha \land \beta) = T \land T = T$
+                                    <br>$\bar{V}(\alpha \lor \beta) = T \lor T = T$
+                                    <br>$\bar{V}(\alpha \to \beta) = T \to T = T$
+                                    <br>$\bar{V}(\alpha \leftrightarrow \beta) = T \leftrightarrow T = T$
+                                </li>
+                            </ul>
+                            <p><strong>המסקנה והסתירה:</strong> לא ניתן לייצר מתוך קבוצה זו שום פסוק שערכו שקר ($F$) במודול שבו כל המשתנים אמת (כמו הפסוק $\neg p$). לכן הקבוצה אינה שלימה (מ.ש.ל).</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה בשינוי מצב לילה/יום דינמי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+            // רענון נוסחאות מתמטיות בעת פתיחה
+            if (window.MathJax && panel.classList.contains('open')) {
+                MathJax.typesetPromise([panel]);
+            }
+        }
+    </script>
+</body>
+</html>

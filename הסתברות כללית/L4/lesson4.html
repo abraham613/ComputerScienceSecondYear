@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הסתברות - שיעור: משתנים מקריים בדידים, תוחלת ושונות</title>
+    <!-- MathJax לתצוגה מתמטית נקייה ומקצועית -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercises {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .btn-sol-item {
+            background-color: var(--success-color);
+            color: white;
+            margin-top: 6px;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercises {
+            background-color: rgba(142, 68, 173, 0.08);
+            border-color: #8e44ad;
+        }
+
+        .panel-solution {
+            background-color: var(--sol-bg);
+            border-color: var(--success-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .sub-question-card {
+            background-color: var(--item-bg);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid #8e44ad;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+
+        .sub-question-title {
+            font-weight: 600;
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        table.styled-table {
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.95rem;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        table.styled-table th, table.styled-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+
+        table.styled-table th {
+            background-color: var(--accent-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>הסתברות כללית - הרצאה וסדנה</h1>
+        <h2>סיכום מקיף: משתנים מקריים בדידים, פונקציית התפלגות, תוחלת ושונות</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. הגדרת משתנה מקרי (בדיד ורציף)</a></li>
+                <li><a href="#topic-2">2. פונקציית הסתברות ופונקציית התפלגות מצטברת</a></li>
+                <li><a href="#topic-3">3. מדדים: תוחלת של משתנה מקרי</a></li>
+                <li><a href="#topic-4">4. מדדים: שונות וסטיית תקן</a></li>
+                <li><a href="#topic-5">5. תרגיל מסכם: הטלת מטבע 3 פעמים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. הגדרת משתנה מקרי</h2>
+                    <span class="objective-tag">יסודות תיאורטיים</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>משתנה מקרי (Random Variable):</strong> פונקציה המתאימה לכל תוצאה בניסוי מקרי ערך מספרי.</p>
+                    <p>קיימים שני סוגים עיקריים של משתנה מקרי:</p>
+                    <ul>
+                        <li><strong>משתנה מקרי בדיד:</strong> משתנה בעל ערכים סופיים או אינסוף ערכים בודדים הניתנים לספירה.</li>
+                        <li><strong>משתנה מקרי רציף:</strong> משתנה בעל טווח ערכים בקטע רציף (סופי או אינסופי).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמאות בסיסיות</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>דוגמאות מהשיעור:</h4>
+                    <ol>
+                        <li><strong>הטלת קובייה סימטרית פעמיים:</strong> נגדיר \(X\) כסכום התוצאות. \(X\) הוא בדיד בעל ערכים \(\{2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12\}\).</li>
+                        <li><strong>בחירת מספר מקרי מהקטע \((0,2)\):</strong> התוצאה היא משתנה מקרי רציף בעל ערכים בקטע \((0,2)\).</li>
+                        <li><strong>הטלת מטבע סימטרי 3 פעמים:</strong> נגדיר \(X\) כמספר העצים. \(X\) הוא משתנה מקרי בדיד בעל ערכים \(\{0, 1, 2, 3\}\).</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. פונקציית הסתברות ופונקציית התפלגות מצטברת</h2>
+                    <span class="objective-tag">הגדרות ותכונות</span>
+                </div>
+                <div class="theory-section">
+                    <h3>א. פונקציית ההסתברות (Probability Mass Function)</h3>
+                    <p>משתנה מקרי בדיד מיוצג על ידי פונקציית הסתברות (בטבלה בעלת 2 שורות):</p>
+                    <ul>
+                        <li>בשורה העליונה: הערכים האפשריים \(x_1, x_2, \dots, x_n\).</li>
+                        <li>בשורה התחתונה: ההסתברויות המתאימות \(P(X = x_j) = p_j\).</li>
+                    </ul>
+                    <p><strong>תכונות פונקציית ההסתברות:</strong></p>
+                    <div class="math-block">
+                        \[ 1.\quad 0 \le p_j \le 1 \]
+                        \[ 2.\quad \sum p_j = 1 \]
+                    </div>
+
+                    <h3 style="margin-top: 15px;">ב. פונקציית ההתפלגות המצטברת (CDF)</h3>
+                    <p>מוגדרת כהסתברות שמשתנה מקרי \(X\) מקבל ערך קטן או שווה ל-\(t\):</p>
+                    <div class="math-block">
+                        \[ F(t) = P(X \le t) \]
+                    </div>
+                    <p><strong>תכונות פונקציית ההתפלגות המצטברת:</strong></p>
+                    <ul>
+                        <li>פונקציית ההתפלגות היא פונקציה מונוטונית עולה.</li>
+                        <li>\(F(-\infty) = P(X \le -\infty) = 0\)</li>
+                        <li>\(F(\infty) = P(X \le \infty) = 1\)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. תוחלת של משתנה מקרי בדיד</h2>
+                    <span class="objective-tag">מדדי מיקום מרכזי</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>תוחלת:</strong> מדד למיקום מרכזי המייצג את הממוצע המשוקלל של ערכי המשתנה המקרי. מסומנת ב- \(E(X)\).</p>
+                    <p><strong>נוסחת החישוב למשתנה בדיד:</strong></p>
+                    <div class="math-block">
+                        \[ E(X) = \sum x_i \cdot p_i \]
+                    </div>
+                    <p><strong>תכונות התוחלת (ליניאריות):</strong></p>
+                    <div class="math-block">
+                        \[ 1.\quad E(C) = C \quad (\text{עובק לש תלחות}) \]
+                        \[ 2.\quad E(c \cdot X) = c \cdot E(X) \]
+                        \[ 3.\quad E(X + c) = E(X) + c \]
+                        \[ 4.\quad E(X \pm Y) = E(X) \pm E(Y) \]
+                        \[ 5.\quad E(X \cdot Y) = E(X) \cdot E(Y) \quad (\text{רשאכ } X, Y \text{ םייולת יתלב}) \]
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. שונות וסטיית תקן של משתנה מקרי</h2>
+                    <span class="objective-tag">מדדי פיזור</span>
+                </div>
+                <div class="theory-section">
+                    <p>שונות וסטיית תקן הן מדדים המודדים את פיזור הערכים של המשתנה המקרי סביב התוחלת שלו.</p>
+                    
+                    <p><strong>הגדרת השונות \(V(X)\):</strong></p>
+                    <div class="math-block">
+                        \[ V(X) = E\left((X - E(X))^2\right) = E(X^2) - E^2(X) \]
+                    </div>
+                    <p>נוסחת חישוב ישירה מטבלה: \(V(X) = \sum (x_i - E(X))^2 \cdot p_i\)</p>
+
+                    <p><strong>סטיית תקן \(\sigma(X)\):</strong></p>
+                    <div class="math-block">
+                        \[ \sigma(X) = \sqrt{V(X)} \]
+                    </div>
+
+                    <p><strong>תכונות השונות וסטיית התקן:</strong></p>
+                    <div class="math-block">
+                        \[ 1.\quad V(X) \ge 0, \quad \sigma(X) \ge 0 \]
+                        \[ 2.\quad V(c) = 0, \quad \sigma(c) = 0 \]
+                        \[ 3.\quad V(X \pm c) = V(X), \quad \sigma(X \pm c) = \sigma(X) \]
+                        \[ 4.\quad V(c \cdot X) = c^2 \cdot V(X), \quad \sigma(c \cdot X) = |c| \cdot \sigma(X) \]
+                        \[ 5.\quad \text{םא } X, Y \text{ םייולת יתלב: } V(X \pm Y) = V(X) + V(Y) \]
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. תרגיל מסכם: הטלת מטבע סימטרי 3 פעמים</h2>
+                    <span class="objective-tag">תרגיל כיתה מלא</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>ניסוי:</strong> מטילים מטבע סימטרי 3 פעמים. נגדיר משתנה מקרי \(X\) כערך מספר העצים שהתקבלו בהטלות. המשתנה מקבל ערכים \(\{0, 1, 2, 3\}\).</p>
+                </div>
+
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercises" onclick="togglePanel('coin_exercises')">הצג תרגיל וסעיפי פתרון</button>
+                </div>
+
+                <div id="coin_exercises" class="panel panel-exercises">
+                    <h3 style="margin-bottom: 15px; color: #8e44ad;">חישוב מלא לכל מדדי המשתנה:</h3>
+
+                    <!-- סעיף א -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">א. מצא את פונקציית ההסתברות של X (טבלת התפלגות)</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('coin_a')">הצג פתרון</button>
+                        <div id="coin_a" class="panel panel-solution">
+                            <p>מרחב המדגם כולל 8 תוצאות שוות הסתברות. פונקציית ההסתברות היא:</p>
+                            <table class="styled-table">
+                                <thead>
+                                    <tr>
+                                        <th>X</th>
+                                        <th>0</th>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>P(X=x)</strong></td>
+                                        <td>1/8</td>
+                                        <td>3/8</td>
+                                        <td>3/8</td>
+                                        <td>1/8</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ב -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ב. מצא את פונקציית ההתפלגות המצטברת F(t) של X</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('coin_b')">הצג פתרון</button>
+                        <div id="coin_b" class="panel panel-solution">
+                            <p>פונקציית המדרגות המצטברת מוגדרת לפי הקטעים הבאים:</p>
+                            <div class="math-block">
+                                \[ F(t) = \begin{cases} 
+                                0 & t < 0 \\
+                                1/8 & 0 \le t < 1 \\
+                                4/8 = 1/2 & 1 \le t < 2 \\
+                                7/8 & 2 \le t < 3 \\
+                                1 & t \ge 3 
+                                \end{cases} \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ג -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ג. חשב את התוחלת E(X)</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('coin_c')">הצג פתרון</button>
+                        <div id="coin_c" class="panel panel-solution">
+                            <p>לפי נוסחת התוחלת למשתנה בדיד:</p>
+                            <div class="math-block">
+                                \[ E(X) = \sum x_i \cdot p_i = 0 \cdot \frac{1}{8} + 1 \cdot \frac{3}{8} + 2 \cdot \frac{3}{8} + 3 \cdot \frac{1}{8} \]
+                            </div>
+                            <div class="math-block">
+                                \[ E(X) = 0 + \frac{3}{8} + \frac{6}{8} + \frac{3}{8} = \frac{12}{8} = \frac{3}{2} = 1.5 \]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- סעיף ד -->
+                    <div class="sub-question-card">
+                        <div class="sub-question-title">ד. חשב את השונות V(X) ואת סטיית התקן σ(X)</div>
+                        <button class="btn btn-sol-item" onclick="togglePanel('coin_d')">הצג פתרון</button>
+                        <div id="coin_d" class="panel panel-solution">
+                            <p>לפי הגדרת השונות \(V(X) = E\left((X - E(X))^2\right)\):</p>
+                            <div class="math-block">
+                                \[ V(X) = (0 - 1.5)^2 \cdot \frac{1}{8} + (1 - 1.5)^2 \cdot \frac{3}{8} + (2 - 1.5)^2 \cdot \frac{3}{8} + (3 - 1.5)^2 \cdot \frac{1}{8} \]
+                            </div>
+                            <div class="math-block">
+                                \[ V(X) = 2.25 \cdot \frac{1}{8} + 0.25 \cdot \frac{3}{8} + 0.25 \cdot \frac{3}{8} + 2.25 \cdot \frac{1}{8} = \frac{2.25 + 0.75 + 0.75 + 2.25}{8} = \frac{6}{8} = 0.75 \]
+                            </div>
+                            <p style="margin-top: 10px;"><strong>חישוב סטיית התקן:</strong></p>
+                            <div class="math-block">
+                                \[ \sigma(X) = \sqrt{V(X)} = \sqrt{0.75} \approx 0.866 \approx 0.87 \]
+                            </div>
+                            <p style="margin-top: 10px;"><strong>שרטוט סביבת סטיית תקן אחת סביב התוחלת:</strong></p>
+                            <div class="math-block">
+                                \[ [E(X) - \sigma(X), \quad E(X) + \sigma(X)] = [1.5 - 0.87, \quad 1.5 + 0.87] = [0.63, \quad 2.37] \]
+                            </div>
+                            <p>הערכים השלמים של המשתנה המקרי $X$ הנופלים בתחום זה הם $X=1$ ו-$X=2$.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה במצב לילה/יום
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבנה המחשב - סיכום מקיף ומאוחד (רכיבים צירופיים וזיכרון)</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .note-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 4px solid var(--warning-color);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 0.92rem;
+        }
+
+        .danger-box {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-right: 4px solid var(--danger-color);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>מבנה המחשב - סיכום מקיף ומאוחד</h1>
+        <h2>רכיבים צירופיים, מיתוג, פישוט אלגברי, דלגלגים ומעגלים סדרתיים</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#topic-1">1. מימוש פונקציה מתוך טבלת אמת (SOP)</a></li>
+                <li><a href="#topic-2">2. פישוט אלגברי ושער XOR מורחב</a></li>
+                <li><a href="#topic-3">3. מרבב (Multiplexer - MUX)</a></li>
+                <li><a href="#topic-4">4. מימוש מרבב באמצעות שערים לוגיים</a></li>
+                <li><a href="#topic-5">5. מפלג (Demultiplexer - DEMUX)</a></li>
+                <li><a href="#topic-6">6. מקודד בינארי (Encoder)</a></li>
+                <li><a href="#topic-7">7. מפענח בינארי (Decoder)</a></li>
+                <li><a href="#topic-8">8. תרגיל 1: מימוש בערכות שלמות</a></li>
+                <li><a href="#topic-9">9. תרגיל 2: ניתוח מעגל צירופי</a></li>
+                <li><a href="#topic-10">10. פתרון מפורט וניתוח טבלת אמת לתרגיל 2</a></li>
+                <li><a href="#topic-11">11. מסכם מלא (Full Adder - FA)</a></li>
+                <li><a href="#topic-12">12. סיכום מרכז של רכיבים וכללים</a></li>
+                <li><a href="#topic-13">13. יסודות מבנה הזיכרון והדלגלג (Flip-Flop)</a></li>
+                <li><a href="#topic-14">14. חוסר יציבות במערכת א-סינכרונית</a></li>
+                <li><a href="#topic-15">15. בריח בסיסי (SR-Latch) - מבנה ופעולת Set</a></li>
+                <li><a href="#topic-16">16. SR-Latch - פעולת Reset (איפוס)</a></li>
+                <li><a href="#topic-17">17. SR-Latch - מצב השימור (Memory/Hold)</a></li>
+                <li><a href="#topic-18">18. SR-Latch - המצב האסור ובעיית המרוץ</a></li>
+                <li><a href="#topic-19">19. סקירת ארבעת סוגי הדלגלגים (FF Types)</a></li>
+                <li><a href="#topic-20">20. דלגלג Set-Reset (SR-FF) אסינכרוני</a></li>
+                <li><a href="#topic-21">21. דלגלג Toggle (T-FF) ואיפוס אסינכרוני</a></li>
+                <li><a href="#topic-22">22. דלגלג JK (JK-FF) - הפתרון למצב האסור</a></li>
+                <li><a href="#topic-23">23. דלגלג Data/Delay (D-FF) והרגיסטרים</a></li>
+                <li><a href="#topic-24">24. תרגיל תכנון 1: מימוש T-FF בעזרת SR-FF</a></li>
+                <li><a href="#topic-25">25. פתרון תרגיל 1: מציאת משוואות ושרטוט מעגל</a></li>
+                <li><a href="#topic-26">26. טבלת סיכום מרכזת של כל הדלגלגים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. מימוש פונקציה מתוך טבלת אמת (SOP)</h2>
+                    <span class="objective-tag">סכום של מכפלות</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטת <strong>Sum of Products (SOP)</strong> מאפשרת לבנות ביטוי אלגברי עבור פונקציה לוגית ישירות מתוך טבלת האמת שלה:</p>
+                    <ol>
+                        <li>מאתרים את כל השורות בטבלה שבהן התוצאה היא <span dir="ltr">Y = 1</span>.</li>
+                        <li>לכל שורה כותבים מכפלת AND (Minterm) של המשתנים: משתנה שערכו 1 נכתב רגיל, ומשתנה שערכו 0 נכתב עם גג (NOT).</li>
+                        <li>מחברים את כל המכפלות באמצעות פעולת OR לקבלת הביטוי המלא.</li>
+                    </ol>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמה והרחבה: טבלת אמת וחלוקה למכפלות</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>דוגמה עבור 3 משתנים (A, B, C):</h4>
+                    <p>עבור השורות שבהן <span dir="ltr">Y = 1</span> (001, 010, 100, 111), נקבל את המכפלות:</p>
+                    <div class="math-block">
+                        Y = Ā B̄ C + Ā B C̄ + A B̄ C̄ + A B C
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. פישוט אלגברי ושער XOR מורחב</h2>
+                    <span class="objective-tag">פונקציית זוגיות (Parity)</span>
+                </div>
+                <div class="theory-section">
+                    <p>באמצעות הוצאת גורם משותף וזהויות לוגיות, ניתן לפשט את ביטוי ה-SOP המורכב לשער XOR משולש:</p>
+                    <div class="math-block">
+                        Y = Ā (B̄ C + B C̄) + A (B̄ C̄ + B C)
+                        <br>
+                        Y = Ā (B &oplus; C) + A (B &oplus; C)&macr; = A &oplus; B &oplus; C
+                    </div>
+                    <div class="note-box">
+                        <strong>פונקציית זוגיות (Parity):</strong> המוצא שווה ל-1 אם ורק אם מספר הכניסות השוות ל-1 הוא <strong>אי-זוגי</strong> (1 או 3). משמשת לגילוי שגיאות במערכות תקשורת וזיכרון.
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex2')">הצג דוגמה והרחבה: בדיקת ערכים בטבלת אמת</button>
+                </div>
+                <div id="ex2" class="panel panel-example">
+                    <h4>בדיקת התנהגות:</h4>
+                    <ul>
+                        <li>בצירוף 111 (שלוש אחדות - אי-זוגי): <span dir="ltr">Y = 1</span>.</li>
+                        <li>בצירוף 011 (שתי אחדות - זוגי): <span dir="ltr">Y = 0</span>.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. מרבב (Multiplexer - MUX)</h2>
+                    <span class="objective-tag">בורר נתונים</span>
+                </div>
+                <div class="theory-section">
+                    <p>מרבב הוא מערכת צירופית הבוררת מבוא נתונים אחד מבין מספר מבואות, ומעבירה את ערכו למוצא יחיד Y:</p>
+                    <ul>
+                        <li><strong>מבואות נתונים (<span dir="ltr">D<sub>0</sub> ... D<sub>n-1</sub></span>):</strong> הערכים המועברים למוצא.</li>
+                        <li><strong>מבואות בורר (<span dir="ltr">S<sub>0</sub>, S<sub>1</sub> ...</span>):</strong> הקווים שקובעים איזו כניסה נבחרת לפי קוד בינארי.</li>
+                        <li><strong>נוסחת קווי בורר:</strong> כדי לבחור מתוך <span dir="ltr">2<sup>n</sup></span> כניסות, נדרשים n קווי בורר.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3')">הצג דוגמה והרחבה: טבלת אמת מרבב 4 &rarr; 1</button>
+                </div>
+                <div id="ex3" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>S<sub>1</sub></th><th>S<sub>0</sub></th><th>מוצא (Y)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>D<sub>0</sub></td></tr>
+                            <tr><td>0</td><td>1</td><td>D<sub>1</sub></td></tr>
+                            <tr><td>1</td><td>0</td><td>D<sub>2</sub></td></tr>
+                            <tr><td>1</td><td>1</td><td>D<sub>3</sub></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. מימוש מרבב באמצעות שערים לוגיים</h2>
+                    <span class="objective-tag">מימוש פיזי</span>
+                </div>
+                <div class="theory-section">
+                    <p>מרבב 4 &rarr; 1 ממומש באמצעות 4 שערי AND (שערי "שומר"), שערי NOT לייצור משלימי הבוררים, ושער OR מרכזי במוצא:</p>
+                    <div class="math-block">
+                        Y = S̄<sub>1</sub> S̄<sub>0</sub> D<sub>0</sub> + S̄<sub>1</sub> S<sub>0</sub> D<sub>1</sub> + S<sub>1</sub> S̄<sub>0</sub> D<sub>2</sub> + S<sub>1</sub> S<sub>0</sub> D<sub>3</sub>
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4')">הצג דוגמה והרחבה: מנגנון הפעולה של שערי ה-AND</button>
+                </div>
+                <div id="ex4" class="panel panel-example">
+                    <p>בכל רגע נתון, צירוף הבוררים <span dir="ltr">S<sub>1</sub>, S<sub>0</sub></span> פותח בדיוק שער AND אחד (מעביר את ה-D שלו), בעוד שאר שלושת שערי ה-AND מוציאים 0 קבוע.</p>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. מפלג (Demultiplexer - DEMUX)</h2>
+                    <span class="objective-tag">מנתב נתונים</span>
+                </div>
+                <div class="theory-section">
+                    <p>מפלג מבצע את הפעולה ההפוכה ממרבב: הוא מנתב כניסת נתונים יחידה D לאחד מתוך מספר מוצאים אפשריים (<span dir="ltr">Y<sub>0</sub> ... Y<sub>3</sub></span>) לפי קווי הבחירה:</p>
+                    <div class="math-block">
+                        Y<sub>0</sub> = D &middot; S̄<sub>1</sub> &middot; S̄<sub>0</sub>, &nbsp;&nbsp; Y<sub>1</sub> = D &middot; S̄<sub>1</sub> &middot; S<sub>0</sub>
+                        <br>
+                        Y<sub>2</sub> = D &middot; S<sub>1</sub> &middot; S̄<sub>0</sub>, &nbsp;&nbsp; Y<sub>3</sub> = D &middot; S<sub>1</sub> &middot; S<sub>0</sub>
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5')">הצג דוגמה והרחבה: אנלוגיית מסילת רכבת</button>
+                </div>
+                <div id="ex5" class="panel panel-example">
+                    <p>אפשר לדמות מפלג לניתוב מסילת רכבת: הרכבת (הנתון D) מגיעה מנתיב בודד, והמסוט (קווי הבורר) קובע לאיזו מסילה יציאה הנתון יימשך.</p>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="topic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. מקודד בינארי (Encoder)</h2>
+                    <span class="objective-tag">קידוד אינדקס</span>
+                </div>
+                <div class="theory-section">
+                    <p>מקודד מקבל מספר כניסות (שבהן רק כניסה אחת דולקת בכל רגע) ומפיק במוצא קוד בינארי המייצג את אינדקס הכניסה הפעילה:</p>
+                    <ul>
+                        <li>מקודד 4 &rarr; 2: ממיר 4 כניסות נתונים לקוד בינארי בן 2 סיביות.</li>
+                        <li>נוסחאות המימוש בשערי OR:
+                            <div class="math-block">
+                                Y<sub>1</sub> = D<sub>1</sub> + D<sub>3</sub>, &nbsp;&nbsp; Y<sub>0</sub> = D<sub>2</sub> + D<sub>3</sub>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex6')">הצג דוגמה והרחבה: מקודד עדיפויות (Priority Encoder)</button>
+                </div>
+                <div id="ex6" class="panel panel-example">
+                    <p>אם יותר מכניסה אחת דולקת במקביל במקודד רגיל, התוצאה תשתבש. כדי לפתור זאת משתמשים ב<strong>מקודד עדיפויות</strong> הנותן קדימות לכניסה בעלת האינדקס הגבוה ביותר.</p>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="topic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. מפענח בינארי (Decoder)</h2>
+                    <span class="objective-tag">פענוח כתובת/פקודה</span>
+                </div>
+                <div class="theory-section">
+                    <p>מפענח מבצע את הפעולה ההפוכה ממקודד: הוא מקבל קוד בינארי בכניסה ומדליק (מוציא 1) <strong>רק במוצא אחד</strong> המתאים לקוד זה:</p>
+                    <ul>
+                        <li>מפענח 2 &rarr; 4: עבור 2 סיביות בכניסה, מפעיל מוצא אחד מתוך 4.</li>
+                        <li><strong>שימושים במחשב:</strong> פענוח כתובות בזיכרון/קובץ רגיסטרים, ופענוח קוד פקודה (Instruction Decode) ביחידת הבקרה.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex7')">הצג דוגמה והרחבה: קשר למפלג (Demux)</button>
+                </div>
+                <div id="ex7" class="panel panel-example">
+                    <p>מפענח בינארי זהה לחלוטין למפלג (Demux) שבו כניסת הנתונים הראשית D מקובעת לערך הלוגי '1'.</p>
+                </div>
+            </section>
+
+            <!-- נושא 8 -->
+            <section id="topic-8" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">8. תרגיל 1: מימוש בערכות שלמות</h2>
+                    <span class="objective-tag">כללי דה-מורגן</span>
+                </div>
+                <div class="theory-section">
+                    <p>נתונה הפונקציה: <span dir="ltr">F = a b + a b' + b' c</span>. יש לממשה בשני אופנים:</p>
+                    <ol style="padding-right: 20px;">
+                        <li>בעזרת שערי {OR, NOT} בלבד.</li>
+                        <li>בעזרת שערי {AND, NOT} בלבד.</li>
+                    </ol>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex8')">הצג דוגמה והרחבה: שלבי הפישוט והמציאה</button>
+                </div>
+                <div id="ex8" class="panel panel-example">
+                    <h4>1. פישוט מקדים:</h4>
+                    <div class="math-block">
+                        F = a (b + b') + b' c = a &middot; 1 + b' c = a + b' c
+                    </div>
+                    <h4>2. מימוש ב-{OR, NOT} בלבד:</h4>
+                    <div class="math-block">
+                        b' c = ( (b' c)&macr; )&macr; = (b + c')&macr; &rArr; F = a + (b + c')&macr;
+                    </div>
+                    <h4>3. מימוש ב-{AND, NOT} בלבד:</h4>
+                    <div class="math-block">
+                        F = ( (a + b' c)&macr; )&macr; = (a' &middot; (b' c)&macr;)&macr;
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 9 -->
+            <section id="topic-9" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">9. תרגיל 2: ניתוח מעגל צירופי</h2>
+                    <span class="objective-tag">הנדסה הפוכה</span>
+                </div>
+                <div class="theory-section">
+                    <p>ניתוח מעגל הוא תהליך חילוץ הביטויים הבוליאניים וטבלת האמת מתוך שרטוט לוגי נתון כדי להבין את תפקידו:</p>
+                    <ol style="padding-right: 20px;">
+                        <li>משייכים שמות למוצאי שערי הביניים (<span dir="ltr">T<sub>1</sub>, T<sub>2</sub> ...</span>).</li>
+                        <li>כותבים ביטוי לוגי לכל שער משמאל לימין.</li>
+                        <li>מפשטים את הביטויים של המוצאים הסופיים (<span dir="ltr">F<sub>1</sub>, F<sub>2</sub></span>).</li>
+                    </ol>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex9')">הצג דוגמה והרחבה: ביטויי המוצא המפושטים</button>
+                </div>
+                <div id="ex9" class="panel panel-example">
+                    <p>מניתוח המעגל בשרטוט התקבלו הביטויים הסופיים:</p>
+                    <div class="math-block">
+                        F<sub>2</sub> = A B + C
+                        <br>
+                        F<sub>1</sub> = (A &oplus; B) &oplus; C = A &oplus; B &oplus; C
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 10 -->
+            <section id="topic-10" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">10. פתרון מפורט וניתוח טבלת אמת לתרגיל 2</h2>
+                    <span class="objective-tag">טבלת אמת מלאה</span>
+                </div>
+                <div class="theory-section">
+                    <p>טבלת אמת מלאה המציגה את כל מוצאי הביניים לכל 8 הצירופים:</p>
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>A</th><th>B</th><th>C</th><th>T1</th><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>F2</th><th>T6</th><th>F1</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><strong>0</strong></td><td>0</td><td><strong>0</strong></td></tr>
+                            <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td><strong>0</strong></td><td>1</td><td><strong>1</strong></td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td><strong>0</strong></td><td>1</td><td><strong>1</strong></td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td><strong>1</strong></td><td>0</td><td><strong>0</strong></td></tr>
+                            <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td><strong>0</strong></td><td>1</td><td><strong>1</strong></td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td><strong>1</strong></td><td>0</td><td><strong>0</strong></td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td><strong>1</strong></td><td>0</td><td><strong>0</strong></td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td><strong>1</strong></td><td>0</td><td><strong>1</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex10')">הצג דוגמה והרחבה: מסקנה על זהות המעגל</button>
+                </div>
+                <div id="ex10" class="panel panel-example">
+                    <p>הצירוף <span dir="ltr">F<sub>2</sub> F<sub>1</sub></span> מייצג את סכום האחדות הבינארי בכניסות. המעגל שנותח הוא <strong>מסכם מלא (Full Adder)</strong>!</p>
+                </div>
+            </section>
+
+            <!-- נושא 11 -->
+            <section id="topic-11" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">11. מסכם מלא (Full Adder - FA)</h2>
+                    <span class="objective-tag">חיבור בינארי</span>
+                </div>
+                <div class="theory-section">
+                    <p>מסכם מלא מחבר שתי סיביות (A, B) ונשא נכנס (<span dir="ltr">C<sub>in</sub></span>), ומפיק סכום (S) ונשא יוצא (<span dir="ltr">C<sub>out</sub></span>):</p>
+                    <div class="math-block">
+                        S = A &oplus; B &oplus; C<sub>in</sub>
+                        <br>
+                        C<sub>out</sub> = A B + (A &oplus; B) C<sub>in</sub>
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex11')">הצג דוגמה והרחבה: חסכון בשערים לוגיים</button>
+                </div>
+                <div id="ex11" class="panel panel-example">
+                    <p>מכיוון ש-<span dir="ltr">A &oplus; B</span> מחושב כבר עבור יצירת הסכום S, משתמשים בתוצאה זו מחדש בחישוב של <span dir="ltr">C<sub>out</sub></span> ובכך חוסכים שערים ומקצרים זמני השהייה.</p>
+                </div>
+            </section>
+
+            <!-- נושא 12 -->
+            <section id="topic-12" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">12. סיכום מרכז של רכיבים וכללים</h2>
+                    <span class="objective-tag">תמצית השיעור</span>
+                </div>
+                <div class="theory-section">
+                    <ul>
+                        <li><strong>שערים בסיסיים:</strong> AND (כפול), OR (חיבור), NOT (היפוך), XOR (מספר אי-זוגי של 1-ים).</li>
+                        <li><strong>כללי דה-מורגן:</strong> <span dir="ltr">(A + B)&macr; = Ā B̄</span>,&nbsp;&nbsp;<span dir="ltr">(A B)&macr; = Ā + B̄</span>.</li>
+                        <li><strong>ערכות שלמות:</strong> שערי NAND בלבד או שערי NOR בלבד מספיקים לבניית כל מעגל.</li>
+                        <li><strong>רכיבים צירופיים:</strong> MUX (בחירת נתון), DEMUX (ניתוב נתון), Encoder (קידוד קוד), Decoder (פענוח כתובת), Full Adder (חיבור 3 סיביות).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex12')">הצג דוגמה והרחבה: סיכום נוסחאות מחברים</button>
+                </div>
+                <div id="ex12" class="panel panel-example">
+                    <p><strong>Half Adder:</strong> <span dir="ltr">S = A &oplus; B, &nbsp;&nbsp; C = A B</span></p>
+                    <p><strong>Full Adder:</strong> <span dir="ltr">S = A &oplus; B &oplus; C<sub>in</sub>, &nbsp;&nbsp; C<sub>out</sub> = A B + (A &oplus; B) C<sub>in</sub></span></p>
+                </div>
+            </section>
+
+            <!-- נושא 13 -->
+            <section id="topic-13" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">13. יסודות מבנה הזיכרון והדלגלג (Flip-Flop)</h2>
+                    <span class="objective-tag">שקופית 6</span>
+                </div>
+                <div class="theory-section">
+                    <p>בניגוד למעגלים צירופיים שבהם המוצא תלוי אך ורק בכניסות הנוכחיות, מעגל סדרתי כולל <strong>זיכרון</strong> והמוצא שלו תלוי גם במצב הקודם:</p>
+                    <ul>
+                        <li><strong>דלגלג (Flip-Flop / F-F):</strong> אלמנט הזיכרון הבסיסי ביותר במחשב, המסוגל לאחסן סיבית אחת (0 או 1).</li>
+                        <li><strong>סוגי מערכות:</strong>
+                            <ul>
+                                <li><strong>סינכרונית:</strong> השינויים במוצא מתרחשים <strong>בזמן הופעת אות השעון (Clock)</strong> בלבד. בזמן שאין פולס שעון, האינפורמציה נשמרת ללא שינוי.</li>
+                                <li><strong>א-סינכרונית:</strong> המעגל מגיב מיד לכל שינוי בכניסות ללא תלות בשעון.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex13')">הצג דוגמה והרחבה: סוגי טריגרים של שעון</button>
+                </div>
+                <div id="ex13" class="panel panel-example">
+                    <h4>רגעים המוגדרים כ"הופעת שעון":</h4>
+                    <ul>
+                        <li><strong>עלייה (Rising Edge):</strong> הרגע המדויק שבו האות עובר מ-0 ל-1.</li>
+                        <li><strong>ירידה (Falling Edge):</strong> הרגע המדויק שבו האות עובר מ-1 ל-0.</li>
+                        <li><strong>רמה (Level):</strong> כל הזמן שבו האות נמצא ב-1 (או ב-0).</li>
+                    </ul>
+                    <p><strong>הבחנה חשובה:</strong> רכיב שמגיב לעלייה/ירידה נקרא <code>Edge-triggered</code>, בעוד רכיב שמגיב לרמה נקרא לרוב <code>Latch</code>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 14 -->
+            <section id="topic-14" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">14. חוסר יציבות במערכת א-סינכרונית</h2>
+                    <span class="objective-tag">שקופית 7</span>
+                </div>
+                <div class="theory-section">
+                    <p>מעגל הזיכרון הבסיסי ביותר בנוי משני שערי היפוך (NOT) המחוברים בלולאת משוב צולבת (A נכנס למהפך 2 ויוצר את B, ו-B נכנס למהפך 1 ויוצר את A):</p>
+                    <ul>
+                        <li><strong>מצב יציב (A=0, B=1 או A=1, B=0):</strong> המעגל מתייצב, הערכים מתאימים זה לזה והמצב נשאר כפי שהוא לנצח. המעגל "זוכר" סיבית אחת.</li>
+                        <li><strong>מצב לא יציב (A=1, B=1):</strong> שני השערים מנסים לשנות את המצב בו-זמנית ל-0. התוצאה הסופית תלויה בעיכוב הפיזי (Propagation Delay) של השערים ולכן אינה צפויה.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex14')">הצג דוגמה והרחבה: הסיבה למעבר למערכות סינכרוניות</button>
+                </div>
+                <div id="ex14" class="panel panel-example">
+                    <h4>מסקנה הנדסית:</h4>
+                    <p>במעגלים אסינכרוניים עם משוב עשויים להיווצר מצבי ביניים בלתי יציבים המביאים לתוצאה אקראית. זוהי הסיבה המרכזית לכך שרוב המערכות הספרתיות מעוצבות כ<strong>מערכות סינכרוניות המונעות על ידי שעון</strong>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 15 -->
+            <section id="topic-15" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">15. בריח בסיסי (SR-Latch) - מבנה ופעולת Set</h2>
+                    <span class="objective-tag">שקופית 8</span>
+                </div>
+                <div class="theory-section">
+                    <p>כדי לשלוט על הזיכרון, מחליפים את המהפכים בשני שערי NOR עם משוב צולב, ומוסיפים כניסות שליטה:</p>
+                    <ul>
+                        <li><strong>R (Reset):</strong> כניסת איפוס בשער העליון.</li>
+                        <li><strong>S (Set):</strong> כניסת קביעה בשער התחתון.</li>
+                        <li><strong>יציאות:</strong> Q (הערך השמור) ו-Q̄ (או Q', הערך ההפוך).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex15')">הצג דוגמה: מעקב צעד-אחר-צעד לפעולת Set (S=1, R=0)</button>
+                </div>
+                <div id="ex15" class="panel panel-example">
+                    <h4>ניתוח זרימת אותות עבור S=1, R=0:</h4>
+                    <ol style="padding-right: 20px;">
+                        <li>שער 2 מקבל S=1. בשער NOR, מספיקה כניסה אחת של 1 כדי שהמוצא יהיה 0. לכן Q' = 0.</li>
+                        <li>המשוב מעביר את Q'=0 לכניסת שער 1.</li>
+                        <li>שער 1 מקבל R=0 ו-Q'=0. כיוון ששתי הכניסות הן 0, מוצא שער NOR הוא 1, כלומר Q = 1.</li>
+                        <li>המשוב מעביר את Q=1 לשער 2, שממשיך להוציא 0. המעגל התייצב על Q=1. זוהי פעולת <strong>Set</strong>.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 16 -->
+            <section id="topic-16" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">16. SR-Latch - פעולת Reset (איפוס)</h2>
+                    <span class="objective-tag">שקופית 9</span>
+                </div>
+                <div class="theory-section">
+                    <p>בשל הבנייה הסימטרית של המעגל, הפעלה של כניסת ה-Reset עובדת בצורה הופכת לחלוטין ל-Set:</p>
+                    <ul>
+                        <li>כאשר מזינים R=1 ו-S=0, המעגל מבצע איפוס של היציאה Q ל-0.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex16')">הצג דוגמה: מעקב צעד-אחר-צעד לפעולת Reset (R=1, S=0)</button>
+                </div>
+                <div id="ex16" class="panel panel-example">
+                    <h4>ניתוח זרימת אותות עבור R=1, S=0:</h4>
+                    <ol style="padding-right: 20px;">
+                        <li>שער 1 מקבל R=1, ולכן מוציא מיד 0, כלומר Q = 0.</li>
+                        <li>המשוב מעביר את Q=0 לשער 2.</li>
+                        <li>שער 2 מקבל S=0 ו-Q=0, ולכן מוציא 1, כלומר Q' = 1.</li>
+                        <li>המשוב מעביר את Q'=1 לשער 1, שממשיך להוציא 0. המעגל התייצב על Q=0. זוהי פעולת <strong>Reset</strong>.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 17 -->
+            <section id="topic-17" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">17. SR-Latch - מצב השימור (Memory/Hold)</h2>
+                    <span class="objective-tag">שקופית 10</span>
+                </div>
+                <div class="theory-section">
+                    <p>זהו הלב המרכזי של הזיכרון: לאחר שניתנה פקודת Set (Q=1) או Reset (Q=0), אנו מחזירים את שתי הכניסות ל-0 (S=0, R=0):</p>
+                    <ul>
+                        <li>כאשר S=0 ו-R=0, <strong>אין שום שינוי במוצא</strong>, והמעגל מנציח את המצב הקודם בזכות לולאת המשוב.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex17')">הצג דוגמה: הוכחה אלגברית למצב שימור</button>
+                </div>
+                <div id="ex17" class="panel panel-example">
+                    <h4>מצב S=0, R=0 כאשר הערך הקודם היה Q=1, Q'=0:</h4>
+                    <ul>
+                        <li>שער 2 מקבל S=0 ו-Q=1 &rArr; מוציא <span dir="ltr">(0 + 1)&macr; = 0</span>, כלומר Q' נשאר 0.</li>
+                        <li>שער 1 מקבל R=0 ו-Q'=0 &rArr; מוציא <span dir="ltr">(0 + 0)&macr; = 1</span>, כלומר Q נשאר 1.</li>
+                    </ul>
+                    <p><strong>סיכום מצבים עד כה:</strong> <span dir="ltr">S=1 &rArr; Set (Q=1)</span>, <span dir="ltr">R=1 &rArr; Reset (Q=0)</span>, <span dir="ltr">S=0, R=0 &rArr; Hold (Q<sub>t+1</sub> = Q<sub>t</sub>)</span>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 18 -->
+            <section id="topic-18" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">18. SR-Latch - המצב האסור ובעיית המרוץ</h2>
+                    <span class="objective-tag">שקופית 11</span>
+                </div>
+                <div class="theory-section">
+                    <p>מה קורה כאשר מזינים בו-זמנית S=1 ו-R=1?</p>
+                    <div class="danger-box">
+                        <strong>מצב אסור / לא מוגדר (Forbidden / Invalid State):</strong><br>
+                        כאשר S=1 ו-R=1, שני השערים מוציאים 0, כלומר נוצר מצב בלתי תקין שבו Q=0 וגם Q'=0 (מפסיקים להיות הפוכים זה מזה!).
+                    </div>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex18')">הצג דוגמה: בעיית המרוץ (Race Condition)</button>
+                </div>
+                <div id="ex18" class="panel panel-example">
+                    <h4>סכנת המעבר מ-S=R=1 ל-S=R=0:</h4>
+                    <p>אם המעגל נמצא במצב S=1, R=1 ונעביר את שניהם בבת אחת ל-0, שני השערים ינסו לעלות ל-1. השער המהיר יותר מבחינה פיזית "ינצח" ויכריח את השני לרדת ל-0. כתוצאה מכך, המצב הסופי אינו צפוי והמעגל עלול להיכנס לתנודות (Oscillation).</p>
+                </div>
+            </section>
+
+            <!-- נושא 19 -->
+            <section id="topic-19" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">19. סקירת ארבעת סוגי הדלגלגים (FF Types)</h2>
+                    <span class="objective-tag">שקופית 15</span>
+                </div>
+                <div class="theory-section">
+                    <p>כל דלגלג מהווה יחידת זיכרון לסיבית אחת וכולל שתי יציאות (Q ו-Q̄). השונים ביניהם מתבטאים בטבלת המעברים ובכניסות הבקרה:</p>
+                    <ul>
+                        <li><strong>SR-FF:</strong> כניסות S, R (קביעה ל-1, איפוס ל-0, שימור, ומצב אסור).</li>
+                        <li><strong>T-FF (Toggle):</strong> כניסה אחת T. אם T=1 המצב מתהפך, אם T=0 המצב נשמר.</li>
+                        <li><strong>D-FF (Data/Delay):</strong> כניסה אחת D. המוצא מקבל את הערך של D בפולס השעון הבא.</li>
+                        <li><strong>JK-FF:</strong> משלב בין SR ל-T. פותר את המצב האסור של SR על ידי הפיכת J=1, K=1 לפעולת Toggle.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex19')">הצג דוגמה: תפקיד היציאה המשלימה Q̄</button>
+                </div>
+                <div id="ex19" class="panel panel-example">
+                    <h4>היציאה Q̄ (או Q'):</h4>
+                    <p>היציאה ההפוכה ניתנת מתוך הרכיב "בחינם" כחלק ממבנה המשוב הפנימי, והיא חוסכת הוספת שערי NOT חיצוניים במעגלים מורכבים.</p>
+                </div>
+            </section>
+
+            <!-- נושא 20 -->
+            <section id="topic-20" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">20. דלגלג Set-Reset (SR-FF) אסינכרוני</h2>
+                    <span class="objective-tag">שקופית 16</span>
+                </div>
+                <div class="theory-section">
+                    <p>ייצוג ה-SR-Latch כ"קופסה שחורה" רשמית בארכיטקטורה:</p>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>S</th>
+                                <th>R</th>
+                                <th>Q<sub>t+1</sub></th>
+                                <th>תאור הפעולה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>Q<sub>t</sub></td><td>שימור (No Change)</td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td><td>איפוס (Reset)</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>קביעה (Set)</td></tr>
+                            <tr><td>1</td><td>1</td><td>Undefined</td><td>מצב אסור / לא מוגדר</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex20')">הצג דוגמה: פירוש הסימון Q<sub>t</sub> ו-Q<sub>t+1</sub></button>
+                </div>
+                <div id="ex20" class="panel panel-example">
+                    <h4>הגדרת זמנים בטבלה:</h4>
+                    <ul>
+                        <li><span dir="ltr">Q<sub>t</sub></span>: המצב הנוכחי של הזיכרון (מה שהיה מאוחסן עד כה).</li>
+                        <li><span dir="ltr">Q<sub>t+1</sub></span>: המצב החדש של הזיכרון לאחר החלת כניסות הבקרה.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 21 -->
+            <section id="topic-21" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">21. דלגלג Toggle (T-FF) ואיפוס אסינכרוני</h2>
+                    <span class="objective-tag">שקופית 17</span>
+                </div>
+                <div class="theory-section">
+                    <p>דלגלג T הינו דלגלג סינכרוני המופעל על ידי שעון (<span dir="ltr">C<sub>p</sub></span>), וכולל לעיתים קרובות כניסת איפוס אסינכרונית (CLR̄):</p>
+                    <ul>
+                        <li><strong>פעולה רגילה (CLR̄ = 1):</strong>
+                            <ul>
+                                <li>כאשר T=0: המוצא אינו משתנה (<span dir="ltr">Q<sub>n+1</sub> = Q<sub>n</sub></span>).</li>
+                                <li>כאשר T=1: המוצא מתהפך בכל פולס שעון (<span dir="ltr">Q<sub>n+1</sub> = Q̄<sub>n</sub></span>).</li>
+                            </ul>
+                        </li>
+                        <li><strong>כניסת איפוס (CLR̄ = 0):</strong> מיוצגת עם עיגול (Active Low) ומאפסת את המוצא ל-0 באופן מיידי ללא תלות בשעון או ב-T.</li>
+                        <li><strong>נוסחה לוגית:</strong> <span dir="ltr">Q<sub>n+1</sub> = T &oplus; Q<sub>n</sub></span>.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex21')">הצג דוגמה: שימוש ב-T-FF כמימוש מונים (Counters)</button>
+                </div>
+                <div id="ex21" class="panel panel-example">
+                    <h4>חלוקת תדר (Frequency Division):</h4>
+                    <p>כאשר מקבעים T=1, הדלגלג מחליף את מצבו בכל פולס שעון. כתוצאה מכך, תדר גל המוצא ב-Q בדיוק שווה למחצית מתדר השעון המקורי (f/2). תכונה זו מהווה בסיס לבניית מונים דיגיטליים.</p>
+                </div>
+            </section>
+
+            <!-- נושא 22 -->
+            <section id="topic-22" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">22. דלגלג JK (JK-FF) - הפתרון למצב האסור</h2>
+                    <span class="objective-tag">שקופית 18</span>
+                </div>
+                <div class="theory-section">
+                    <p>דלגלג JK משלב בין תכונות SR-FF לבין T-FF, ופותר לחלוטין את הבעיה של המצב האסור:</p>
+
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>CLR̄</th>
+                                <th>J</th>
+                                <th>K</th>
+                                <th>Q<sub>n+1</sub></th>
+                                <th>התנהגות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>0</td><td>0</td><td>Q<sub>n</sub></td><td>שימור (Hold)</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>איפוס (Reset)</td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>קביעה (Set)</td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td><td>Q̄<sub>n</sub></td><td>היפוך (Toggle)</td></tr>
+                            <tr><td>0</td><td>X</td><td>X</td><td>0</td><td>איפוס אסינכרוני מיידי</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex22')">הצג דוגמה: הפיכת JK-FF ל-T-FF ונוסחה אופיינית</button>
+                </div>
+                <div id="ex22" class="panel panel-example">
+                    <ul>
+                        <li><strong>חיבור כ-T-FF:</strong> אם מחברים את J ו-K יחד לקו אחד T, כאשר T=0 נקבל J=K=0 (שימור), וכאשר T=1 נקבל J=K=1 (היפוך).</li>
+                        <li><strong>נוסחה אופיינית:</strong> <span dir="ltr">Q<sub>n+1</sub> = J &middot; Q̄<sub>n</sub> + K̄ &middot; Q<sub>n</sub></span>.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 23 -->
+            <section id="topic-23" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">23. דלגלג Data/Delay (D-FF) והרגיסטרים</h2>
+                    <span class="objective-tag">שקופית 19</span>
+                </div>
+                <div class="theory-section">
+                    <p>דלגלג D הינו הרכיב הפשוט והנפוץ ביותר לשמירת נתונים: מה שנכנס ב-D עובר ל-Q בפולס השעון הבא (<span dir="ltr">Q<sub>t+1</sub> = D</span>):</p>
+                    <ul>
+                        <li><strong>מימוש:</strong> ניתן לממש D-FF על ידי לקחת SR-FF ולחבר שער NOT בין S ל-R (<span dir="ltr">S = D, R = D̄</span>).</li>
+                        <li><strong>יתרון:</strong> כיוון ש-S ו-R תמיד הפוכים, נמנע לחלוטין המצב האסור S=R=1.</li>
+                        <li><strong>אבן הבניין של רגיסטרים:</strong> רגיסטר של 32 סיביות במעבד מורכב מ-32 דלגלגי D הרצים על אותו אות שעון.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex23')">הצג דוגמה: טבלת מעברים ל-D-FF</button>
+                </div>
+                <div id="ex23" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>D</th><th>Q<sub>t</sub></th><th>Q<sub>t+1</sub></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                    <p>ניתן לראות בבירור כי <span dir="ltr">Q<sub>t</sub></span> אינו משפיע על התוצאה, ותמיד <span dir="ltr">Q<sub>t+1</sub> = D</span>.</p>
+                </div>
+            </section>
+
+            <!-- נושא 24 -->
+            <section id="topic-24" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">24. תרגיל תכנון 1: מימוש T-FF בעזרת SR-FF</h2>
+                    <span class="objective-tag">שקופית 20</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>משימה:</strong> ממש דלגלג T בעזרת דלגלג SR ושערים לוגיים.</p>
+                    <p>כדי לבצע זאת, נבנה טבלת מעברים שמגדירה מה צריכות להיות הכניסות S ו-R עבור כל שילוב של הכניסה T והמצב הנוכחי <span dir="ltr">Q<sub>t</sub></span>:</p>
+
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>T</th>
+                                <th>Q<sub>t</sub></th>
+                                <th>Q<sub>t+1</sub> הרצוי</th>
+                                <th>S הנדרש</th>
+                                <th>R הנדרש</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>&phi;</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td><td>&phi;</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex24')">הצג דוגמה: הסבר למצבי ה-&phi; (Don't Care)</button>
+                </div>
+                <div id="ex24" class="panel panel-example">
+                    <h4>פיענוח שורות ה-&phi;:</h4>
+                    <ul>
+                        <li>שורה 1 (<span dir="ltr">T=0, Q<sub>t</sub>=0 &rArr; Q<sub>t+1</sub>=0</span>): כדי לקבל 0 במוצא, ניתן להשתמש בשימור (S=0, R=0) או באיפוס (S=0, R=1). בשני המקרים S=0, בעוד R יכול להיות 0 או 1. לכן R = &phi;.</li>
+                        <li>שורה 4 (<span dir="ltr">T=0, Q<sub>t</sub>=1 &rArr; Q<sub>t+1</sub>=1</span>): מסיבה דומה, R=0 ו-S = &phi;.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 25 -->
+            <section id="topic-25" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">25. פתרון תרגיל 1: מציאת משוואות ושרטוט מעגל</h2>
+                    <span class="objective-tag">שקופית 21</span>
+                </div>
+                <div class="theory-section">
+                    <p>מתוך בחירה אופטימלית של ערכי ה-&phi;, מפיקים משוואות לוגיות עבור הכניסות S ו-R:</p>
+                    <div class="math-block">
+                        S = Q<sub>t</sub> &oplus; T &nbsp;&nbsp; (שער XOR)
+                        <br>
+                        R = Q<sub>t</sub> &middot; T &nbsp;&nbsp; (שער AND)
+                    </div>
+                    <p><strong>בדיקת תקינות:</strong> נוודא שאי אפשר להגיע למצב האסור S=1, R=1. כדי ש-R=1 צריך <span dir="ltr">Q<sub>t</sub>=1</span> ו-T=1, אך במצב זה <span dir="ltr">S = 1 &oplus; 1 = 0</span>. לכן המצב האסור לעולם לא יתרחש.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex25')">הצג דוגמה: ארבעת שלבי התכנון לכל השאלות מסוג זה</button>
+                </div>
+                <div id="ex25" class="panel panel-example">
+                    <h4>מתודולוגיית תכנון דלגלגים למבחן:</h4>
+                    <ol style="padding-right: 20px;">
+                        <li>בניית טבלת מעברים בין המצב הנוכחי <span dir="ltr">Q<sub>t</sub></span> למצב הרצוי <span dir="ltr">Q<sub>t+1</sub></span>.</li>
+                        <li>מילוי הכניסות של הדלגלג הקיים (בניצול מצבי &phi;).</li>
+                        <li>פישוט אלגברי או מפת קארנו למציאת הביטויים עבור הכניסות.</li>
+                        <li>שרטוט המעגל הכולל את השערים הלוגיים והמשוב מ-Q.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 26 -->
+            <section id="topic-26" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">26. טבלת סיכום מרכזת של כל הדלגלגים</h2>
+                    <span class="objective-tag">שקופית 19 (סיכום)</span>
+                </div>
+                <div class="theory-section">
+                    <p>טבלה מרוכזת לשליפה מהירה במבחן עבור כל סוגי הדלגלגים:</p>
+
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>סוג FF</th>
+                                <th>כניסות</th>
+                                <th>התנהגות המעבר (Q<sub>n+1</sub>)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SR</strong></td>
+                                <td>S, R</td>
+                                <td>00 שומר, 01 איפוס (0), 10 קביעה (1), 11 אסור</td>
+                            </tr>
+                            <tr>
+                                <td><strong>T</strong></td>
+                                <td>T</td>
+                                <td>T=0 שומר, T=1 מתהפך</td>
+                            </tr>
+                            <tr>
+                                <td><strong>JK</strong></td>
+                                <td>J, K</td>
+                                <td>כמו SR, אבל 11 מתהפך (Toggle)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>D</strong></td>
+                                <td>D</td>
+                                <td><span dir="ltr">Q<sub>n+1</sub> = D</span> (מעביר נתון)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex26')">הצג דוגמה: נקודות מפתח למבחן</button>
+                </div>
+                <div id="ex26" class="panel panel-example">
+                    <ul>
+                        <li>כניסת CLR̄ עם עיגול פירושה איפוס <strong>אסינכרוני</strong> הפעיל בנמוך (Active Low).</li>
+                        <li>מימוש דלגלג אחד בעזרת אחר מבוצע תמיד באמצעות טבלת מעברים, פישוט עם &phi;, ומשוב מ-Q.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה בשרשור תמה (מצב לילה/יום) מהחלון הראשי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('open');
+            }
+        }
+    </script>
+</body>
+</html>

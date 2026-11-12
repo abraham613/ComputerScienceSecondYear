@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבנה המחשב - סיכום מקיף (שיעור: אוגרים, מונים ומכונות מצבים FSM)</title>
+    <!-- MathJax Support for LaTeX equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --sol-bg: #eef9f2;
+            --item-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --sol-bg: #1b2e23;
+            --item-bg: #252525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 290px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .subtopics-nav li.section-divider {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--warning-color);
+            margin-top: 10px;
+            margin-bottom: 4px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 2px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .note-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 4px solid var(--warning-color);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>מבנה המחשב - סיכום מקיף</h1>
+        <h2>אוגרים, אוגרי הזזה, מונים ומכונות מצבים סופיות (Moore & Mealy FSM)</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li class="section-divider">חלק א': אוגרים ואוגרי הזזה</li>
+                <li><a href="#topic-1">1. אוגר בסיסי וטעינה מקבילית</a></li>
+                <li><a href="#topic-2">2. אוגרי הזזה (Shift Registers)</a></li>
+                <li><a href="#topic-3">3. אוגר הזזה אוניברסלי (Parallel/Serial)</a></li>
+
+                <li class="section-divider">חלק ב': מונים (Counters)</li>
+                <li><a href="#topic-4">4. מבוא למונים ומונים סינכרוניים</a></li>
+                <li><a href="#topic-5">5. ייצוג מעגלי ודופק מנייה</a></li>
+
+                <li class="section-divider">חלק ג': מכונות מצבים סופיות (FSM)</li>
+                <li><a href="#topic-6">6. ניתוח מעגלים סדרתיים ו-FSM</a></li>
+                <li><a href="#topic-7">7. מכונת Moore – הגדרה ודיאגרמה</a></li>
+                <li><a href="#topic-8">8. מכונת Mealy – הגדרה ודיאגרמה</a></li>
+                <li><a href="#topic-9">9. השוואה וטבלאות מצבים (Moore vs Mealy)</a></li>
+
+                <li class="section-divider">חלק ד': תכנון וסכימה כללית</li>
+                <li><a href="#topic-10">10. סכימה ארכיטקטונית כללית ל-FSM</a></li>
+                <li><a href="#topic-11">11. ניתוח דוגמה מעשית וטבלאות מצבים</a></li>
+                <li><a href="#topic-12">12. בקרה ועיבוד מידע (Controller vs Datapath)</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- ================= חלק א': אוגרים ואוגרי הזזה ================= -->
+
+            <!-- נושא 1 -->
+            <section id="topic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. אוגר בסיסי וטעינה מקבילית (Parallel Load Registers)</h2>
+                    <span class="objective-tag">שקופיות 46-48</span>
+                </div>
+                <div class="theory-section">
+                    <p>אוגר (Register) הוא רכיב זיכרון המורכב מסדרת דלגלגים (Flip-Flops) המיועדים לאחסון מילת נתונים בינארית:</p>
+                    <ul>
+                        <li><strong>אוגר 4-bit בסיסי:</strong> מורכב מ-4 דלגלגי D הפועלים תחת שעון משותף (\(CP\)). הנתונים נטענים בכל פולס שעון ללא בקרה.</li>
+                        <li><strong>אוגר עם קו בקרה (\(LOAD\)):</strong>
+                            <ul>
+                                <li>כאשר \(LOAD = 0\): האוגר שומר על הערך הקודם (Hold).</li>
+                                <li>כאשר \(LOAD = 1\): מתבצעת טעינה מקבילית של הנתונים אל האוגר.</li>
+                            </ul>
+                        </li>
+                        <li><strong>צורות מימוש:</strong>
+                            <ul>
+                                <li><strong>בעזרת SRFF:</strong> שערי AND בכניסה המנתבים את הנתונים ל-Set ול-Reset רק כשיש \(LOAD = 1\).</li>
+                                <li><strong>בעזרת DFF:</strong> שערי AND-OR לפני כניסת ה-\(D\), המזינים חזרה את היציאה \(Q\) כש-\(LOAD=0\), או את הקלט החדש כש-\(LOAD=1\).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1')">הצג דוגמה: ניתוח מצבי בקרה באוגר DFF</button>
+                </div>
+                <div id="ex1" class="panel panel-example">
+                    <h4>טבלת אמת לקלט הדלגלג \(D_i\):</h4>
+                    <div class="math-block">
+                        $$D_i = (I_i \cdot LOAD) + (Q_i \cdot \overline{LOAD})$$
+                    </div>
+                    <ul>
+                        <li>אם \(LOAD = 1\): \(D_i = I_i \cdot 1 + Q_i \cdot 0 = I_i\) &larr; נטען המידע החדש.</li>
+                        <li>אם \(LOAD = 0\): \(D_i = I_i \cdot 0 + Q_i \cdot 1 = Q_i\) &larr; נשמר הערך הקיים.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="topic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. אוגרי הזזה (Shift Registers)</h2>
+                    <span class="objective-tag">שקופיות 52-53</span>
+                </div>
+                <div class="theory-section">
+                    <p>אוגר הזזה מורכב מדלגלגים המחוברים בשרשרת, כך שהמוצא של דלגלג אחד מזין את הכניסה של הדלגלג השכן בכל פעימת שעון משותפת:</p>
+                    <ul>
+                        <li><strong>סוגי הזזות:</strong>
+                            <ul>
+                                <li><strong>הזזה ימינה / שמאלה:</strong> כניסה טורית (\(SI\)) בסיבית הקצה ויציאה טורית (\(SO\)) מהקצה השני.</li>
+                                <li><strong>הזזה מעגלית (Circular Shift):</strong> היציאה של הביט האחרון מוזנת חזרה ככניסה לביט הראשון.</li>
+                            </ul>
+                        </li>
+                        <li><strong>שימושים מרכזיים בחומרה:</strong>
+                            <ul>
+                                <li>כפול וחילוק במספרים בינאריים (הזזה שמאלה מכפילה ב-2, הזזה ימינה מחלקת ב-2).</li>
+                                <li>המרה בין תקשורת טורית לתקשורת מקבילית.</li>
+                                <li>מימוש קודי תיקון שגיאות ורכיבי הצפנה.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex2')">הצג דוגמה: פעולת הזזה ימינה</button>
+                </div>
+                <div id="ex2" class="panel panel-example">
+                    <p>בהינתן אוגר של 4 ביט עם המצב התחלתי \(1010_2\) וכניסה טורית \(SI = 1\):</p>
+                    <p>לאחר פעימת שעון אחת של הזזה ימינה, המצב החדש באוגר יהיה \(1101_2\) (הביט 0 הימני נפל, והביט 1 שנכנס ב-\(SI\) התמקם ב-MSB).</p>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="topic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. אוגר הזזה אוניברסלי (Parallel to Serial Register)</h2>
+                    <span class="objective-tag">שקופיות 55-58</span>
+                </div>
+                <div class="theory-section">
+                    <p>אוגר הזזה אוניברסלי מאפשר לבצע מספר פעולות שונות (שמירה, הזזה ימינה, הזזה שמאלה, וטעינה מקבילית) באמצעות רכיבי מרבב (\(4 \times 1\ \text{MUX}\)) לפני כל דלגלג:</p>
+                    <ul>
+                        <li><strong>קווי הבקרה (\(S_1, S_0\)):</strong> קובעים את אופן הפעולה של כל המרבבים במקביל:</li>
+                    </ul>
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>\(S_1\)</th><th>\(S_0\)</th><th>מצב פעולה (Operation)</th><th>תיאור לוגי</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td><strong>Store / NOP</strong></td><td>שמירת מצב (היציאה \(Q_i\) מוזנת חזרה לכניסה)</td></tr>
+                            <tr><td>0</td><td>1</td><td><strong>Shift Right</strong></td><td>הזזה ימינה (מקבל נתון מ-\(SI_{\text{Right}}\) ומהשכן משמאל)</td></tr>
+                            <tr><td>1</td><td>0</td><td><strong>Shift Left</strong></td><td>הזזה שמאלה (מקבל נתון מ-\(SI_{\text{Left}}\) ומהשכן מימין)</td></tr>
+                            <tr><td>1</td><td>1</td><td><strong>Parallel Load</strong></td><td>טעינה מקבילית מיידית של הקלטים \(I_1, I_2, I_3, I_4\)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3')">הצג דוגמה: ניתוח MUX באוגר אוניברסלי</button>
+                </div>
+                <div id="ex3" class="panel panel-example">
+                    <p>עבור הדלגלג ה-2 (\(Q_2\)), הכניסות למרבב ה-\(4 \times 1\) הקיים לפניו מחוברות כך:</p>
+                    <ul>
+                        <li>כניסה 0: \(Q_2\) (שמירה)</li>
+                        <li>כניסה 1: \(Q_1\) (הזזה ימינה - מגיע מהשכן השמאלי)</li>
+                        <li>כניסה 2: \(Q_3\) (הזזה שמאלה - מגיע מהשכן הימני)</li>
+                        <li>כניסה 3: \(I_2\) (קלט טעינה מקבילית)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ================= חלק ב': מונים (Counters) ================= -->
+
+            <!-- נושא 4 -->
+            <section id="topic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. מבוא למונים (Counters) ומונים סינכרוניים</h2>
+                    <span class="objective-tag">שקופיות 60-61</span>
+                </div>
+                <div class="theory-section">
+                    <p>מונה הוא סוג מיוחד של מעגל סדרתי שעובר דרך סדרה מוגדרת מראש של מצבים בינאריים בתגובה לפעומות שעון:</p>
+                    <ul>
+                        <li><strong>מונה סינכרוני:</strong> כל הדלגלגים במערכת מתודמנים על ידי אות שעון משותף (\(CLK\)), מה שמונע שגיאות תזמון (Glitches).</li>
+                        <li><strong>סוגי מונים:</strong>
+                            <ul>
+                                <li><strong>Up Counter:</strong> מוסיף 1 לערך המונה בכל פולס שעון.</li>
+                                <li><strong>Down Counter:</strong> מפחית 1 מהערך בכל פולס שעון.</li>
+                            </ul>
+                        </li>
+                        <li><strong>מחזוריות המונה (Wrap Around):</strong> לאחר הגעה לערך המקסימלי (למשל \(11_2 = 3\) במונה 2 ביט), המונה "כורך סביב" וחוזר ל-\(00_2\).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4')">הצג דוגמה: מונה 2 סיביות (2-bit Counter)</button>
+                </div>
+                <div id="ex4" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr><th>מצב נוכחי (\(A_t, B_t\))</th><th>מצב הבא (\(A_{t+1}, B_{t+1}\))</th><th>ערך עשרוני</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>00</td><td>01</td><td>0 &rarr; 1</td></tr>
+                            <tr><td>01</td><td>10</td><td>1 &rarr; 2</td></tr>
+                            <tr><td>10</td><td>11</td><td>2 &rarr; 3</td></tr>
+                            <tr><td>11</td><td>00</td><td>3 &rarr; 0 (חזרה להתחלה)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="topic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. ייצוג מעגלי ודופק מנייה (Count Pulse)</h2>
+                    <span class="objective-tag">שקופית 62</span>
+                </div>
+                <div class="theory-section">
+                    <p>מונים מתאפיינים במעברים מעגליים קבועים בין המצבים:</p>
+                    <ul>
+                        <li><strong>דופק מנייה (Count Pulse):</strong> אות השעון או מקור אירועים חיצוני המניע את המעבר בין השורות בטבלת המצבים.</li>
+                        <li><strong>מאפיין ייחודי:</strong> במונים בסיסיים אין כניסות מידע מורכבות או יציאות נפרדות; המצב הפנימי של הדלגלגים עצמו מהווה את תוצר הפלט.</li>
+                        <li><strong>שימושים:</strong> מדידת זמן, חלוקת תדרים (Frequency Division), ותזמון רכיבים במעבד.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5')">הצג דוגמה: מחזוריות מונה 3-bit</button>
+                </div>
+                <div id="ex5" class="panel panel-example">
+                    <p>מונה 3 סיביות כולל \(2^3 = 8\) מצבים. המסלול המעגלי הרציף הינו:</p>
+                    <div class="math-block">
+                        $$000 \rightarrow 001 \rightarrow 010 \rightarrow 011 \rightarrow 100 \rightarrow 101 \rightarrow 110 \rightarrow 111 \rightarrow 000$$
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= חלק ג': מכונות מצבים סופיות (FSM) ================= -->
+
+            <!-- נושא 6 -->
+            <section id="topic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. ניתוח מעגלים סדרתיים ו-FSM</h2>
+                    <span class="objective-tag">שקופיות 63-65</span>
+                </div>
+                <div class="theory-section">
+                    <p>מכונת מצבים סופית (Finite State Machine - FSM) היא המודל המתמטי וההנדסי הכללי לתיאור מעגלים סדרתיים:</p>
+                    <ul>
+                        <li><strong>תלות בזמן:</strong> הפלט והמצב הבא ברגע \(t+1\) אינם פונקציה של הקלט הנוכחי בלבד, אלא תלויים במצב הזיכרון ברגע \(t\) ובקלט ברגע \(t\).</li>
+                        <li><strong>אוטומט עם פלט:</strong> הרחבה של אוטומט סופי מקבל, שבה המערכת אינה מסתפקת ב"מקבל/לא מקבל", אלא מפיקה מילת פלט (טרנספורמציה של סדרת קלט לסדרת פלט).</li>
+                        <li><strong>שתי המשפחות הראשיות:</strong> מכונת Moore ומכונת Mealy.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex6')">הצג דוגמה: דוגמת הפיכת סיביות (Bit Inverter)</button>
+                </div>
+                <div id="ex6" class="panel panel-example">
+                    <p>משימה: בנית אוטומט המקבל סדרת סיביות ומפיק את הופכן (למשל, עבור הקלט \(00101_2\) יופק הפלט \(11010_2\)).</p>
+                    <p>ניתן לממש זאת הן בגישת Moore (פלט משויך למצב) והן בגישת Mealy (פלט משויך למעבר).</p>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="topic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. מכונת Moore – הגדרה ודיאגרמה</h2>
+                    <span class="objective-tag">שקופיות 68, 71</span>
+                </div>
+                <div class="theory-section">
+                    <p>במכונת מצבים מסוג <strong>Moore</strong>, פונקציית הפלט תלויה **אך ורק במצב הנוכחי** שבו נמצאת המערכת:</p>
+                    <ul>
+                        <li><strong>הגדרה פורמלית:</strong> המכונה מוגדרת כשישייה \(M = (\Sigma, \Delta, Q, q_0, \delta, \lambda)\):
+                            <ul>
+                                <li>\(\Sigma\): א"ב קלט, \(\Delta\): א"ב פלט, \(Q\): קבוצת המצבים, \(q_0\): מצב התחלתי.</li>
+                                <li>\(\delta: Q \times \Sigma \rightarrow Q\): פונקציית המעבר בין מצבים.</li>
+                                <li>\(\lambda: Q \rightarrow \Delta\): פונקציית הפלט (מקבלת **מצב בלבד**).</li>
+                            </ul>
+                        </li>
+                        <li><strong>ייצוג בדיאגרמת מצבים:</strong> ערך הפלט נרשם **בתוך העיגול** של המצב (למשל \(\frac{S_0}{Z=0}\)). הקשתות מכילות רק את ערך הקלט שגרם למעבר.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex7')">הצג דוגמה: דיאגרמת Moore</button>
+                </div>
+                <div id="ex7" class="panel panel-example">
+                    <p>מצב \(S_0\) מוגדר עם פלט \(Z=0\). אם מגיע קלט \(X=1\), עוברים למצב \(S_1\) שבו הפלט מוגדר כ-\(Z=1\). הפלט משתנה רק בעקבות שינוי מצב בפולס השעון.</p>
+                </div>
+            </section>
+
+            <!-- נושא 8 -->
+            <section id="topic-8" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">8. מכונת Mealy – הגדרה ודיאגרמה</h2>
+                    <span class="objective-tag">שקופיות 74-75</span>
+                </div>
+                <div class="theory-section">
+                    <p>במכונת מצבים מסוג <strong>Mealy</strong>, פונקציית הפלט תלויה **הן במצב הנוכחי והן בכניסה הנוכחית**:</p>
+                    <ul>
+                        <li><strong>הגדרה פורמלית:</strong> פונקציית הפלט מוגדרת כ:
+                            <div class="math-block">
+                                $$\lambda: Q \times \Sigma \rightarrow \Delta$$
+                            </div>
+                        </li>
+                        <li><strong>ייצוג בדיאגרמת מצבים:</strong> הפלט אינו רשום בתוך עיגול המצב, אלא **על גבי הקשתות** בפורמט:
+                            <div class="math-block">
+                                $$\text{Input} / \text{Output} \quad (x/z)$$
+                            </div>
+                        </li>
+                        <li><strong>תגובה מהירה:</strong> במכונת Mealy שינוי בקלט יכול להשפיע מיידית על הפלט באותו מחזור שעון (ללא המתנה למעבר המצב בפולס השעון).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex8')">הצג דוגמה: סימון קשת ב-Mealy</button>
+                </div>
+                <div id="ex8" class="panel panel-example">
+                    <p>אם המכונה במצב \(S_0\) ומגיעה כניסה \(X=1\), המסלול מסומן כ-\(1/0\) לעבר מצב \(S_1\). פירוש הדבר: עבור קלט 1 המכונה תעבור ל-\(S_1\) ותפיק פלט מיידי 0.</p>
+                </div>
+            </section>
+
+            <!-- נושא 9 -->
+            <section id="topic-9" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">9. השוואה וטבלאות מצבים (Moore vs Mealy)</h2>
+                    <span class="objective-tag">שקופיות 72, 76</span>
+                </div>
+                <div class="theory-section">
+                    <p>קיימת שקילות מלאה ביכולת התיאור של שני סוגי המכונות, אך מבנה טבלאות המצבים שלהן שונה:</p>
+                    <ul>
+                        <li><strong>טבלת מצבים ב-Moore:</strong> עמודת הפלט \(Z\) הינה יחידה ומשויכת ישירות לשורת המצב הנוכחי (\(PS\)).</li>
+                        <li><strong>טבלת מצבים ב-Mealy:</strong> עמודות הפלט \(Z\) מפוצלות לפי ערכי הקלט (למשל, עמודת פלט עבור \(X=0\) ועמודת פלט עבור \(X=1\)).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex9')">הצג דוגמה: השוואת מבנה טבלאות</button>
+                </div>
+                <div id="ex9" class="panel panel-example">
+                    <h4>מבנה טבלת Mealy (שקופית 76):</h4>
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">PS (מצב נוכחי)</th>
+                                <th colspan="2">NS (מצב הבא)</th>
+                                <th colspan="2">Z (פלט)</th>
+                            </tr>
+                            <tr>
+                                <th>\(x=0\)</th><th>\(x=1\)</th>
+                                <th>\(x=0\)</th><th>\(x=1\)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>\(S_0\)</td><td>\(S_0\)</td><td>\(S_1\)</td><td>0</td><td>0</td></tr>
+                            <tr><td>\(S_1\)</td><td>\(S_2\)</td><td>\(S_1\)</td><td>0</td><td>0</td></tr>
+                            <tr><td>\(S_2\)</td><td>\(S_1\)</td><td>\(S_0\)</td><td>0</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ================= חלק ד': תכנון וסכימה כללית ================= -->
+
+            <!-- נושא 10 -->
+            <section id="topic-10" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">10. סכימה ארכיטקטונית כללית ל-FSM</h2>
+                    <span class="objective-tag">שקופיות 82, 84, 87</span>
+                </div>
+                <div class="theory-section">
+                    <p>כל מכונת מצבים סופית בחומרה מורכבת משיור של מודול צירופי ומודול זיכרון:</p>
+                    <ul>
+                        <li><strong>מבנה המערכת:</strong>
+                            <ul>
+                                <li><strong>לוגיקה צירופית (Combinational Logic):</strong> מחשבת את ערכי המצב הבא (\(Y_1 \dots Y_k\)) ואת ערכי היציאות (\(Z_1 \dots Z_M\)) כתלות בכניסות ובמצב הנוכחי.</li>
+                                <li><strong>רכיבי זיכרון (Flip-Flops):</strong> דלגלגים (מספרם \(m\)) השומרים את משתני המצב הנוכחי (\(y_1 \dots y_k\)).</li>
+                            </ul>
+                        </li>
+                        <li><strong>חישוב ממדי טבלת המצבים:</strong>
+                            <ul>
+                                <li>מספר דלגלגים: \(m\) &rArr; מספר השורות בטבלה: \(2^m\).</li>
+                                <li>מספר כניסות: \(n\) &rArr; עמודות מצב לבא: \(m \times 2^n\).</li>
+                                <li>מספר יציאות: \(k\) &rArr; עמודות פלט: \(k \times 2^n\) (ב-Mealy).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex10')">הצג דוגמה: נוסחאות המעברים והמצבים</button>
+                </div>
+                <div id="ex10" class="panel panel-example">
+                    <p>פונקציית המעבר הכללית:</p>
+                    <div class="math-block">
+                        $$\delta: \{0,1\}^m \times \{0,1\}^n \rightarrow \{0,1\}^m$$
+                    </div>
+                    <p>עבור מערכת עם 2 דלגלגים (\(m=2\)) וכניסה 1 (\(n=1\)): בטבלה יהיו \(2^2 = 4\) שורות, ו-\(2 \times 2^1 = 4\) עמודות עבור תיאור המצב הבא.</p>
+                </div>
+            </section>
+
+            <!-- נושא 11 -->
+            <section id="topic-11" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">11. ניתוח דוגמה מעשית וטבלאות מצבים</h2>
+                    <span class="objective-tag">שקופיות 85, 88-89</span>
+                </div>
+                <div class="theory-section">
+                    <p>בניתוח מעגלים סדרתיים, בודקים את יציאות הדלגלגים ואת היציאות החיצוניות כדי לבנות דיאגרמת מצבים מוגדרת:</p>
+                    <ul>
+                        <li><strong>זיהוי תפקוד המעגל:</strong> למשל, מונה סדרתי הסופר את מספר ה-1-ים ברצף הקלט מודולו 3.</li>
+                        <li><strong>מצבים בלתי מושגים (Unreachable States):</strong> מצבים הקיימים בחומרה עקב מספר הדלגלגים (למשל מצב \(10_2\)), אך המערכת אינה מגיעה אליהם אף פעם במהלך הפעולה התקינה.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex11')">הצג דוגמה: ניתוח מעגל Mealy עם דלגלגי D</button>
+                </div>
+                <div id="ex11" class="panel panel-example">
+                    <p>מעגל המכיל שני דלגלגי D (\(A\) ו-\(B\)), כניסה אחת \(X\) ויציאה אחת \(Out\):</p>
+                    <div class="math-block">
+                        $$D_A = X \cdot Q_A + X \cdot Q_B$$
+                        $$Out = X \cdot Q_A \cdot Q_B$$
+                    </div>
+                    <p>מכיוון שהביט \(X\) מופיע ישירות במשוואת ה-\(Out\), המעגל מסווג מיידית כ-**Mealy Machine**.</p>
+                </div>
+            </section>
+
+            <!-- נושא 12 -->
+            <section id="topic-12" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">12. בקרה ועיבוד מידע (Controller vs Datapath)</h2>
+                    <span class="objective-tag">שקופיות 90, 107</span>
+                </div>
+                <div class="theory-section">
+                    <p>תכנון מערכות מחשב מתקדמות מתבצע תוך הפרדה מבנית בין יחידת הבקרה ליחידת עיבוד הנתונים:</p>
+                    <ul>
+                        <li><strong>יחידת בקרה (Controller / Control Unit):</strong> מכונת מצבים סופית (FSM) המנהלת את סדר הפעולות, מקבלת פקודות חיצוניות ואותות סטטוס, ומפיקה פקודות שליטה.</li>
+                        <li><strong>מעבד נתונים (Datapath / Data Processor):</strong> הארכיטקטורה החומרתית (אוגרים, ALU, מסיטים) המבצעת את החישובים והעברת המידע בפועל.</li>
+                        <li><strong>משוואות מצב וטבלאות עירור (Excitation Tables):}</strong> בתכנון מעגלים סדרתיים נעזרים בטבלאות עירור הקובעות אילו ערכים יש להזיר לכניסות הדלגלג (למשל כניסות \(S,R\) או \(T\)) כדי לגרום למעבר המבוקש מ-\(Q(t)\) ל-\(Q(t+1)\).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex12')">הצג דוגמה: דיאגרמת זרימה בין בקרה למסלול נתונים</button>
+                </div>
+                <div id="ex12" class="panel panel-example">
+                    <p>ארכיטקטורת המערכת:</p>
+                    <ul>
+                        <li>פקודה חיצונית &rArr; <strong>Control Unit</strong></li>
+                        <li><strong>Control Unit</strong> &rArr; שולחת פקודות בקרה (Commands) &rArr; <strong>Data Processor</strong></li>
+                        <li><strong>Data Processor</strong> &rArr; מחזיר אותות מצב (Status Conditions) &rArr; <strong>Control Unit</strong></li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // תמיכה במצב כהה / בהיר מהחלון הראשי
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        // פונקציה לפתיחה וסגירה של פאנלים אינטראקטיביים
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('open');
+            }
+        }
+    </script>
+</body>
+</html>

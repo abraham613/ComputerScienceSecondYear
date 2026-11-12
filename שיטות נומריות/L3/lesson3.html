@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיטות נומריות - שיעור: שיטת המיתר (Regula Falsi & Secant) ושיטת ניוטון-רפסון</title>
+    
+    <!-- MathJax support -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --panel-ex-bg: #f0f8ff;
+            --panel-q-bg: #fff8f0;
+            --sol-bg: #eef9f2;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #2c3e50;
+            --accent-color: #00adb5;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --danger-color: #c0392b;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --panel-ex-bg: #1a2634;
+            --panel-q-bg: #2d241e;
+            --sol-bg: #1b2e23;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px 0 40px 0;
+        }
+
+        header.lesson-header {
+            text-align: center;
+            padding: 1rem 1rem 1.5rem 1rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        .page-layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .subtopics-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .subtopics-nav h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .subtopics-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtopics-nav li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
+        }
+
+        .subtopics-nav li a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topic-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .objective-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theory-section {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .theory-section ul, .theory-section ol {
+            padding-right: 20px;
+            margin-top: 8px;
+        }
+
+        .theory-section li {
+            margin-bottom: 6px;
+        }
+
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-example {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-exercise {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .panel {
+            display: none;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-right: 4px solid;
+            line-height: 1.6;
+        }
+
+        .panel-example {
+            background-color: var(--panel-ex-bg);
+            border-color: var(--accent-color);
+        }
+
+        .panel-exercise {
+            background-color: var(--panel-q-bg);
+            border-color: var(--warning-color);
+        }
+
+        .panel.open {
+            display: block;
+        }
+
+        .num-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .num-table th, .num-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+        }
+
+        .num-table th {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--text-color);
+        }
+
+        .highlight-box {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-right: 3px solid var(--warning-color);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .formula-box {
+            background-color: rgba(52, 152, 219, 0.08);
+            border: 1px dashed var(--accent-color);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="lesson-header">
+        <h1>שיטות נומריות - סיכום שיעור</h1>
+        <h2>שיטת המיתר (Regula Falsi & Secant) ושיטת ניוטון-רפסון (Newton-Raphson)</h2>
+    </header>
+
+    <div class="page-layout">
+
+        <!-- סרגל ניווט ימני (תוכן עניינים) -->
+        <nav class="subtopics-nav">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#subtopic-1">1. שיטת המיתר - Regula Falsi</a></li>
+                <li><a href="#subtopic-2">2. תכונות וחסרונות של Regula Falsi</a></li>
+                <li><a href="#subtopic-3">3. שיטת המיתר החופשית (Secant Method)</a></li>
+                <li><a href="#subtopic-4">4. תרגיל פתור מלא: שיטת המיתר</a></li>
+                <li><a href="#subtopic-5">5. שיטת ניוטון-רפסון (Newton-Raphson)</a></li>
+                <li><a href="#subtopic-6">6. תרגיל פתור מלא: ניוטון-רפסון</a></li>
+                <li><a href="#subtopic-7">7. חקירת פונקציה ומציאת שני שורשים</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-container">
+
+            <!-- נושא 1 -->
+            <section id="subtopic-1" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">1. שיטת המיתר - Regula Falsi (המיקום השגוי)</h2>
+                    <span class="objective-tag">יעד: אלגוריתם מבוסס שינוי סימן</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטת Regula Falsi משלבת בין שיטת החצייה (שמירה על שינוי סימן בקצוות) לבין שימוש בשיפוע המיתר למציאת קירוב טוב יותר.</p>
+                    <ul>
+                        <li><strong>תנאי התחלה:</strong> מחפשים קטע $[a,b]$ שבו הפונקציה רציפה ומתקיים: $f(a) \cdot f(b) < 0$.</li>
+                        <li><strong>חישוב הנקודה החדשה $c$:</strong> חיתוך המיתר המחבר את $(a, f(a))$ ו-$(b, f(b))$ עם ציר ה-$x$:</li>
+                    </ul>
+
+                    <div class="formula-box">
+                        $$\boxed{c = a - f(a) \cdot \frac{b - a}{f(b) - f(a)}}$$
+                    </div>
+
+                    <p><strong>עדכון הקטע:</strong></p>
+                    <ul>
+                        <li>אם $f(a) \cdot f(c) < 0$ $\Leftarrow$ הקטע החדש הוא $[a, c]$ (מציבים $b = c$).</li>
+                        <li>אם $f(b) \cdot f(c) < 0$ $\Leftarrow$ הקטע החדש הוא $[c, b]$ (מציבים $a = c$).</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex1_stopping')">הצג תנאי עצירה</button>
+                </div>
+                <div id="ex1_stopping" class="panel panel-example">
+                    <h4>תנאי עצירה מקובלים:</h4>
+                    <ol>
+                        <li>מספר איטרציות מקסימלי: $k \ge M$.</li>
+                        <li>ערך הפונקציה קרוב מספיק לאפס: $|f(c)| < \varepsilon_f$.</li>
+                        <li>מרחק בין קירובים: $|b_k - a_k| < \varepsilon_x$.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- נושא 2 -->
+            <section id="subtopic-2" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">2. תכונות, יתרונות וחסרונות של Regula Falsi</h2>
+                    <span class="objective-tag">יעד: הערכת ביצועים וסיכונים</span>
+                </div>
+                <div class="theory-section">
+                    <ul>
+                        <li><strong>יתרון:</strong> ברוב המקרים ההתכנסות מהירה יותר משיטת החצייה מכיוון שהיא מתחשבת בערכי הפונקציה $f(a), f(b)$.</li>
+                        <li><strong>חסרון מרכזי:</strong> בפונקציות מסוימות (בעלות קמירות/קעירות חזקה), אחד הקצוות נשאר "תקוע", ולכן אורך הקטע אינו שואף לאפס:
+                        $$|b_n - a_n| \not\to 0$$</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercise" onclick="togglePanel('ex2_warning')">הצג אזהרת תנאי עצירה</button>
+                </div>
+                <div id="ex2_warning" class="panel panel-exercise">
+                    <div class="highlight-box">
+                        <strong>אזהרה:</strong> בשיטת Regula Falsi אסור להסתמך על התנאי $|b_n - a_n| < \varepsilon$ בלבד כתנאי עצירה יחיד, מכיוון שעלולה להתרחש לולאה אינסופית כאשר קצה אחד תקוע. חובה לשלב את התנאי $|f(c_n)| < \varepsilon_f$.
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 3 -->
+            <section id="subtopic-3" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">3. שיטת המיתר החופשית (Secant Method)</h2>
+                    <span class="objective-tag">יעד: אלגוריתם איטרטיבי ללא שמירת סימן</span>
+                </div>
+                <div class="theory-section">
+                    <p>בשיטת Secant מוותרים על הדרישה שהשורש יהיה כלוא בין שתי הנקודות ($f(a) \cdot f(b) < 0$). במקום זאת, משתמשים בכל צעד בשתי הנקודות האחרונות שחושבו.</p>
+                    
+                    <div class="formula-box">
+                        <strong>נוסחת האיטרציה:</strong><br>
+                        $$\boxed{x_{k+1} = x_k - f(x_k) \cdot \frac{x_k - x_{k-1}}{f(x_k) - f(x_{k-1})}}$$
+                    </div>
+
+                    <p><strong>תנאי עצירה:</strong></p>
+                    $$|f(x_{k+1})| < \varepsilon_f \quad \text{או} \quad |x_{k+1} - x_k| < \varepsilon_x$$
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex3_comparison')">הצג השוואה מול Regula Falsi</button>
+                </div>
+                <div id="ex3_comparison" class="panel panel-example">
+                    <h4>השוואה:</h4>
+                    <ul>
+                        <li><strong>Regula Falsi:</strong> מחייבת שמירה על $f(a) \cdot f(b) < 0$, מובטחת התכנסות (אבל עלולה להיות איטית).</li>
+                        <li><strong>Secant Method:</strong> משתמשת ב-$x_k$ ו-$x_{k-1}$ בלבד, אינה מחייבת שינוי סימן, מתכנסת בקצב סופר-ליניארי ($r \approx 1.618$), אך עלולה להתבדר אם הניחוש ההתחלתי רחוק.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 4 -->
+            <section id="subtopic-4" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">4. תרגיל פתור מלא: שיטת המיתר (Secant Method)</h2>
+                    <span class="objective-tag">יעד: חישוב מספרי איטרטיבי מלא מצעד לצעד</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>תרגיל:</strong> מצא קירוב לשורש הפונקציה $f(x) = e^x - 3x$ בעזרת שיטת המיתר עם נקודות התחלה $x_0 = 1, x_1 = 2$ וטולרנס $\varepsilon_f = 0.01$.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex4_sol')">הצג פתרון מלא (כל האיטרציות 1 עד 6)</button>
+                </div>
+                <div id="ex4_sol" class="panel panel-example">
+                    <h4>חישובי הכנה:</h4>
+                    <ul>
+                        <li>$f(x_0) = f(1) = e^1 - 3 \approx -0.2817$</li>
+                        <li>$f(x_1) = f(2) = e^2 - 6 \approx 1.3890$</li>
+                    </ul>
+
+                    <h4>כל שלבי האיטרציות מפורשים:</h4>
+                    <ul>
+                        <li><strong>איטרציה 1 ($k=1$):</strong>
+                            $$x_2 = 2 - 1.3890 \cdot \frac{2 - 1}{1.3890 - (-0.2817)} \approx 1.1683$$
+                            $f(x_2) = e^{1.1683} - 3(1.1683) \approx -0.2883 \implies |-0.2883| \not< 0.01$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 2 ($k=2$):</strong>
+                            $$x_3 = 1.1683 - (-0.2883) \cdot \frac{1.1683 - 2}{-0.2883 - 1.3890} \approx 1.3115$$
+                            $f(x_3) = e^{1.3115} - 3(1.3115) \approx -0.2227 \implies |-0.2227| \not< 0.01$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 3 ($k=3$):</strong>
+                            $$x_4 = 1.3115 - (-0.2227) \cdot \frac{1.3115 - 1.1683}{-0.2227 - (-0.2883)} \approx 1.7963$$
+                            $f(x_4) = e^{1.7963} - 3(1.7963) \approx 0.6384 \implies |0.6384| \not< 0.01$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 4 ($k=4$):</strong>
+                            $$x_5 = 1.7963 - 0.6384 \cdot \frac{1.7963 - 1.3115}{0.6384 - (-0.2227)} \approx 1.4371$$
+                            $f(x_5) = e^{1.4371} - 3(1.4371) \approx -0.1030 \implies |-0.1030| \not< 0.01$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 5 ($k=5$):</strong>
+                            $$x_6 = 1.4371 - (-0.1030) \cdot \frac{1.4371 - 1.7963}{-0.1030 - 0.6384} \approx 1.4871$$
+                            $f(x_6) = e^{1.4871} - 3(1.4871) \approx -0.0371 \implies |-0.0371| \not< 0.01$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 6 ($k=6$):</strong>
+                            $$x_7 = 1.4871 - (-0.0371) \cdot \frac{1.4871 - 1.4371}{-0.0371 - (-0.1030)} \approx 1.5153$$
+                            $f(x_7) = e^{1.5153} - 3(1.5153) \approx 0.004916$
+                        </li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>בדיקת תנאי עצירה:</strong> $|f(x_7)| = 0.004916 < 0.01$. <br>
+                        תנאי העצירה מתקיים, ולכן הקירוב הסופי הוא $\mathbf{x_7 = 1.5153}$.
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 5 -->
+            <section id="subtopic-5" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">5. שיטת ניוטון-רפסון (Newton-Raphson Method)</h2>
+                    <span class="objective-tag">יעד: התכנסות ריבועית באמצעות משיק</span>
+                </div>
+                <div class="theory-section">
+                    <p>שיטת ניוטון-רפסון משתמשת במשיק לגרף הפונקציה בנקודה $(x_k, f(x_k))$ ומחשבת את חיתוכו עם ציר ה-$x$.</p>
+
+                    <div class="formula-box">
+                        <strong>נוסחת ניוטון-רפסון:</strong><br>
+                        $$\boxed{x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}}$$
+                    </div>
+
+                    <p><strong>תנאי עצירה:</strong></p>
+                    $$|x_{k+1} - x_k| < \varepsilon_x \quad \text{או} \quad |f(x_{k+1})| < \varepsilon_f$$
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex5_features')">הצג תכונות ודגשים</button>
+                </div>
+                <div id="ex5_features" class="panel panel-example">
+                    <ul>
+                        <li><strong>סדר התכנסות:</strong> ריבועי ($r = 2$) בסביבת שורש פשוט (מהירה מאוד!).</li>
+                        <li><strong>דרישה:</strong> חישוב הנגזרת $f'(x)$ בכל צעד (חובה ש-$f'(x_k) \neq 0$).</li>
+                        <li><strong>נקודת התחלה:</strong> מחייבת בחירת נקודת התחלה $x_0$ קרובה מספיק לשורש.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- נושא 6 -->
+            <section id="subtopic-6" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">6. תרגיל פתור מלא: ניוטון-רפסון</h2>
+                    <span class="objective-tag">יעד: השוואת מהירות ההתכנסות</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>תרגיל:</strong> פתור את המשוואה $f(x) = e^x - 3x = 0$ עם $\varepsilon_f = 0.01$ ונקודת התחלה $x_0 = 2$ בשיטת ניוטון-רפסון.</p>
+                    <p><strong>נגזרת הפונקציה:</strong> $f'(x) = e^x - 3$.</p>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-example" onclick="togglePanel('ex6_table')">הצג טבלת איטרציות מלאה</button>
+                </div>
+                <div id="ex6_table" class="panel panel-example">
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>איטרציה ($k$)</th>
+                                <th>$x_k$</th>
+                                <th>$f(x_k)$</th>
+                                <th>$f'(x_k)$</th>
+                                <th>$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>$2$</td>
+                                <td>$1.389$</td>
+                                <td>$4.389$</td>
+                                <td>$1.68315$</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>$1.68315$</td>
+                                <td>$0.334$</td>
+                                <td>$2.3845$</td>
+                                <td>$1.5434$</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>$1.5434$</td>
+                                <td>$0.0505$</td>
+                                <td>$1.6907$</td>
+                                <td>$1.513374$</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>$1.5133$</td>
+                                <td>$\mathbf{0.00192}$</td>
+                                <td>-</td>
+                                <td><strong>עוצרים!</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="highlight-box">
+                        <strong>מסקנה:</strong> $|f(x_3)| = 0.00192 < 0.01$. <br>
+                        הגענו לדיוק הנדרש תוך **3 איטרציות בלבד** (לעומת 7 בשיטת המיתר)!
+                    </div>
+                </div>
+            </section>
+
+            <!-- נושא 7 -->
+            <section id="subtopic-7" class="topic-card">
+                <div class="topic-header">
+                    <h2 class="topic-title">7. חקירת פונקציה ומציאת שני שורשים (תרגיל מסכם)</h2>
+                    <span class="objective-tag">יעד: שילוב חקירה אנליטית ושיטות נומריות</span>
+                </div>
+                <div class="theory-section">
+                    <p><strong>נתונה הפונקציה:</strong> $f(x) = x - \ln x - 3$ בתחום $x > 0$.</p>
+                    
+                    <h4>א. הוכחת קיום שני שורשים:</h4>
+                    <ul>
+                        <li>נגזרת: $f'(x) = 1 - \frac{1}{x} = 0 \implies x = 1$.</li>
+                        <li>עבור $0 < x < 1$: $f'(x) < 0$ (הפונקציה יורדת).</li>
+                        <li>עבור $x > 1$: $f'(x) > 0$ (הפונקציה עולה).</li>
+                        <li>ערך המינימום: $f(1) = 1 - \ln(1) - 3 = -2 < 0$.</li>
+                        <li>מכיוון ש-$\lim_{x \to 0^+} f(x) = +\infty$ ו-$\lim_{x \to \infty} f(x) = +\infty$, לפי משפט ערך הביניים קיימים **בדיוק 2 שורשים**: שורש שמאלי בקטע $(0,1)$ ושורש ימני בקטע $(1,\infty)$.</li>
+                    </ul>
+                </div>
+                <div class="interactive-buttons">
+                    <button class="btn btn-exercise" onclick="togglePanel('ex7_left')">הצג פתרון שורש שמאלי (החצייה)</button>
+                    <button class="btn btn-example" onclick="togglePanel('ex7_right')">הצג פתרון שורש ימני (ניוטון-רפסון)</button>
+                </div>
+
+                <!-- פאנל שורש שמאלי -->
+                <div id="ex7_left" class="panel panel-exercise">
+                    <h4>קירוב לשורש השמאלי בשיטת החצייה ($\varepsilon_x = \frac{1}{3}$):</h4>
+                    <p>בוחרים קטע התחלתי $[a_1, b_1] = [0.01, 1]$.</p>
+                    
+                    <table class="num-table">
+                        <thead>
+                            <tr>
+                                <th>איטרציה</th>
+                                <th>$a_k$</th>
+                                <th>$b_k$</th>
+                                <th>$c_k = \frac{a_k+b_k}{2}$</th>
+                                <th>$f(c_k)$</th>
+                                <th>חצי אורך קטע $\frac{b-a}{2}$</th>
+                                <th>בדיקת עצירה ($\le \frac{1}{3}$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>$0.01$</td>
+                                <td>$1$</td>
+                                <td>$0.505$</td>
+                                <td>$-1.8123$</td>
+                                <td>$0.495$</td>
+                                <td>$0.495 \not< 0.333 \implies$ ממשיכים</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>$0.01$</td>
+                                <td>$0.505$</td>
+                                <td>$0.2575$</td>
+                                <td>$-1.099$</td>
+                                <td>$0.2475$</td>
+                                <td>$0.2475 < 0.333 \implies$ <strong>עוצרים!</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="highlight-box">
+                        <strong>תוצאה לשורש השמאלי:</strong> $x \approx \mathbf{0.2575}$.
+                    </div>
+                </div>
+
+                <!-- פאנל שורש ימני -->
+                <div id="ex7_right" class="panel panel-example">
+                    <h4>קירוב לשורש הימני בשיטת ניוטון-רפסון ($\varepsilon_x = \frac{1}{3}$):</h4>
+                    <p>בוחרים נקודת התחלה בקטע הימני: $x_0 = 4$. הנגזרת: $f'(x) = 1 - \frac{1}{x}$.</p>
+
+                    <ul>
+                        <li><strong>איטרציה 1 ($k=0$):</strong>
+                            $$f(4) = 4 - \ln(4) - 3 \approx -0.3863, \quad f'(4) = 1 - 0.25 = 0.75$$
+                            $$x_1 = 4 - \frac{-0.3863}{0.75} = 4.5151$$
+                            בדיקת צעד: $|x_1 - x_0| = |4.5151 - 4| = 0.5151 \not< 0.3333$ (ממשיכים).
+                        </li>
+                        <li><strong>איטרציה 2 ($k=1$):</strong>
+                            $$f(4.5151) \approx 0.0077, \quad f'(4.5151) = 1 - \frac{1}{4.5151} \approx 0.7785$$
+                            $$x_2 = 4.5151 - \frac{0.0077}{0.7785} \approx 4.5052$$
+                            בדיקת צעד: $|x_2 - x_1| = |4.5052 - 4.5151| = 0.0099 < 0.3333$ $\Leftarrow$ **עוצרים!**
+                        </li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>תוצאה לשורש הימני:</strong> $x \approx \mathbf{4.5052}$.
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        let currentIsDark = false;
+
+        if (window.parent) {
+            window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_THEME') {
+                currentIsDark = event.data.isDark;
+                document.body.classList.toggle('dark-mode', currentIsDark);
+            }
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
